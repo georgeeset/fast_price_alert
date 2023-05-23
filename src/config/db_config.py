@@ -1,15 +1,21 @@
 """Configure Mysql database"""
 from sqlalchemy import create_engine
+import os
 
 
-"""Instantiate a DBStorage object"""
-HBNB_MYSQL_USER = getenv('HBNB_MYSQL_USER')
-HBNB_MYSQL_PWD = getenv('HBNB_MYSQL_PWD')
-HBNB_MYSQL_HOST = getenv('HBNB_MYSQL_HOST')
-HBNB_MYSQL_DB = getenv('HBNB_MYSQL_DB')
-HBNB_ENV = getenv('HBNB_ENV')
+MYSQL_PWD = os.environ.get('MYSQL_PWD')
+MYSQL_USER = os.environ.get('MYSQL_USER')
+MYSQL_HOST = os.environ.get('MYSQL_HOST')
+MYSQL_DB = os.environ.get('MYSQL_DB')
+
+
+# print(f'{MYSQL_USER}, {MYSQL_PWD}, {MYSQL_HOST}, {MYSQL_DB}')
+
 engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
-                              format(HBNB_MYSQL_USER,
-                                     HBNB_MYSQL_PWD,
-                                    HBNB_MYSQL_HOST,
-                                    HBNB_MYSQL_DB))
+                              format(MYSQL_USER,
+                                     MYSQL_PWD,
+                                     MYSQL_HOST,
+                                     MYSQL_DB
+                                     ))
+
+db = engine.connect()

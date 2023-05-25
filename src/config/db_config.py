@@ -1,5 +1,7 @@
 """Configure Mysql database"""
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 import os
 
 
@@ -16,6 +18,8 @@ engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
                                      MYSQL_PWD,
                                      MYSQL_HOST,
                                      MYSQL_DB
-                                     ))
+                                     ), echo=True)
 
-db = engine.connect()
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()

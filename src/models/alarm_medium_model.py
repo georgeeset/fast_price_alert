@@ -1,26 +1,19 @@
 """Module for alarm medium specification"""
 
-from sqlalchemy import Column, String
-from models.base_model import Base
+from sqlalchemy import Column, ForeignKey, String, Integer
 from schemas import constants
+from sqlalchemy.orm import relationship
+from config.db_config import Base
 
 
-class AlarmMedium(Base):
+class AlertMedium(Base):
     """alarm medium table properties"""
 
     __tablename__ = constants.alarm_medium
-    alarm_medium_id = Column(int, primary_key=True)
+    alarm_medium_id = Column(Integer, primary_key=True)
     whatsapp_verified = Column(String, nullable=True)
     email_verified = Column(String, nullable=True)
     telegram_verified = Column(String, nullable=True)
+    user_id = Column(Integer, ForeignKey(constants.user_foriegn_key))
 
-    def __repr__(self) -> str:
-        ram = '{%s}({%s}={%d},{%s}={%s}, {%s}={%s}, \
-            {%s}={%s})'.format(
-                constants.alarm_medium,
-                constants.alarm_medium_id, self.alarm_medium_id,
-                constants.whatsapp_verified, self.whatsapp_verified,
-                constants.email_verified, self.email_verified,
-                constants.telegram_verified, self.telegram_verified,
-            )
-        return ram
+    user = relationship(constants.users, back_populates=constants.user_alert_medium_column)

@@ -11,14 +11,11 @@ class BaseUser(BaseModel):
     date_registered: int
     intersts: str
 
-   
-
 class UserIn(BaseUser):
     """input data expected form request
         plus BaseUser data
     """
     password: str
-
 
 class UserOut(BaseUser ):
     """data to confirm success plus BaseUser data"""
@@ -27,3 +24,5 @@ class UserOut(BaseUser ):
     #set the attribute orm_mode = True
     class config:
         orm_mode = True
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True

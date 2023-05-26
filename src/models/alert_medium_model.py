@@ -9,11 +9,11 @@ from config.db_config import Base
 class AlertMedium(Base):
     """alarm medium table properties"""
 
-    __tablename__ = constants.alarm_medium
+    __tablename__ = constants.alert_medium
     alarm_medium_id = Column(Integer, primary_key=True)
-    whatsapp_verified = Column(String, nullable=True)
-    email_verified = Column(String, nullable=True)
-    telegram_verified = Column(String, nullable=True)
+    whatsapp_verified = Column(String(20), nullable=True)
+    email_verified = Column(String(120), nullable=True)
+    telegram_verified = Column(String(20), nullable=True)
     user_id = Column(Integer, ForeignKey(constants.user_foriegn_key))
 
-    user = relationship(constants.users, back_populates=constants.user_alert_medium_column)
+    owner = relationship(constants.User, back_populates=constants.user_alert_medium_column)

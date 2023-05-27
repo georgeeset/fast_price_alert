@@ -13,6 +13,13 @@ MYSQL_DB = os.environ.get('MYSQL_DB')
 
 # print(f'{MYSQL_USER}, {MYSQL_PWD}, {MYSQL_HOST}, {MYSQL_DB}')
 
+# engine = create_engine('mysql+pymysql://{}:{}@{}/{}'.
+#                               format(MYSQL_USER,
+#                                      MYSQL_PWD,
+#                                      MYSQL_HOST,
+#                                      MYSQL_DB
+#                                      ), echo=True)
+
 engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
                               format(MYSQL_USER,
                                      MYSQL_PWD,

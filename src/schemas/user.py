@@ -9,7 +9,7 @@ class BaseUser(BaseModel):
     mobile_number: str
     email: EmailStr
     date_registered: int
-    intersts: str
+    interests: str
 
 class UserIn(BaseUser):
     """input data expected form request

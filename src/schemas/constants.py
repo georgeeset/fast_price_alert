@@ -6,6 +6,7 @@ first_name = 'first_name'
 last_name = 'last_name'
 mobile_number = 'mobile_number'
 email = 'email'
+username = 'username'
 date_registered = 'date_registered'
 interests = 'interests'
 
@@ -35,3 +36,11 @@ user_alert_medium_column = 'user_alert_medium'
 user_already_exists = 'The User already exist'
 
 my_jwt_secrete = 'My_jwt_secrete'
+invalid_credentials = 'Invalid user credentials'
+invalid_user_password = 'invalid user name or password'
+
+access_token = 'access_token'
+access_type = 'access_type'
+exp = 'exp'
+expired_token = 'Token has expired'
+one_day = 86400

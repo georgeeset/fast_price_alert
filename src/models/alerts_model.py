@@ -1,5 +1,5 @@
 """module contains Alerts model"""
-from sqlalchemy import Column, ForeignKey, String, Integer
+from sqlalchemy import Column, Float, ForeignKey, String, Integer
 from sqlalchemy.orm import relationship
 from config.db_config import Base
 from schemas import constants
@@ -16,7 +16,7 @@ class Alerts(Base):
     __tablename__ = constants.alerts
     alert_id = Column(Integer, primary_key=True)
     condition = Column(String(255), nullable=False)
-    setpoint = Column(String(30), nullable=False)
+    setpoint = Column(Float, nullable=False)
     timeframe = Column(String(12), nullable=False)
     alert_medium = Column(String(30), nullable=False)
     repeat_setpoint = Column(Integer, default=1)

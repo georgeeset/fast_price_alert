@@ -3,13 +3,14 @@
 from fastapi import FastAPI, status, HTTPException, Depends
 from models import user_model
 from schemas import constants
-from schemas.alerts import AlertOut
+from schemas.alerts import AlertIn, AlertOut
 from schemas.user import FullUser, UpdateInterest, UserIn, UserOut
 from config.db_config import Base, engine, SessionLocal
 from sqlalchemy.orm import session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import jwt
 import time
+from utils.alert_crud import create_new_alert
 from utils.user_crud import add_user, confirm_user, edit_user, get_user, user_exist
 
 
@@ -94,6 +95,12 @@ def update_user_interest( interests: UpdateInterest, db: session = Depends(get_d
     print(user_update.interests)
     return UserOut.from_orm(user_update)
 
-# @app('/create-alert', response_model=AlertOut, status_code=status.HTTP_201_CREATED, tags=["Create Alert"])
-# def create_alert():
-#     pass
+@app.post('/create-alert', response_model=AlertOut, status_code=status.HTTP_201_CREATED, tags=["Create Alert"])
+def create_alert(alert: AlertIn, user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
+    data = create_new_alert(alert=alert, db=db, user_id=user.user_id)
+    if not data:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid input"
+        )
+    return AlertOut.from_orm(data)

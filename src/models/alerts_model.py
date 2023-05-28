@@ -23,5 +23,7 @@ class Alerts(Base):
     alert_count = Column(Integer, default = 0)
     status = Column(String(30), default=Status.open)
     user_id = Column(Integer, ForeignKey(constants.user_foriegn_key))
+    time_created = Column(Integer, nullable=False)
+    expiration = Column(Integer, nullable=False)
 
     owner = relationship(constants.User, back_populates=constants.user_alerts_column)

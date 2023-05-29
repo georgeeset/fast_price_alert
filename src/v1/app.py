@@ -2,15 +2,16 @@
 
 from fastapi import FastAPI, status, HTTPException, Depends
 from models import user_model
+from models.alerts_model import AlertStatus
 from schemas import constants
-from schemas.alerts import AlertIn, AlertOut
+from schemas.alerts import AlertEditIn, AlertIn, AlertOut
 from schemas.user import FullUser, UpdateInterest, UserIn, UserOut
 from config.db_config import Base, engine, SessionLocal
 from sqlalchemy.orm import session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import jwt
 import time
-from utils.alert_crud import create_new_alert
+from utils.alert_crud import create_new_alert, get_alert_by_id
 from utils.user_crud import add_user, confirm_user, edit_user, get_user, user_exist
 
 
@@ -95,12 +96,35 @@ def update_user_interest( interests: UpdateInterest, db: session = Depends(get_d
     print(user_update.interests)
     return UserOut.from_orm(user_update)
 
-@app.post('/create-alert', response_model=AlertOut, status_code=status.HTTP_201_CREATED, tags=["Create Alert"])
+@app.post('/user/create-alert', response_model=AlertOut, status_code=status.HTTP_201_CREATED, tags=["Create Alert"])
 def create_alert(alert: AlertIn, user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
     data = create_new_alert(alert=alert, db=db, user_id=user.user_id)
     if not data:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid input"
+            detail=constants.invalid_input
         )
     return AlertOut.from_orm(data)
+
+@app.post('/user/edit-alert', response_class=AlertOut, status_code=status.HTTP_202_ACCEPTED, tags=["Update Alert"])
+def edit_alert(alert: AlertEditIn, user:FullUser = Depends(get_current_user), db: session = Depends(get_db)):
+    """update alert if the alert is not expired and not closed"""
+    #check if alert exists
+    data = get_alert_by_id(alert_id= alert.alert_id, user_id=user.user_id, db=db,)
+    if not data:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=constants.alert_not_found
+        )
+    if data.expired:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail=constants.alert_has_expired,
+        )
+    
+    if data.status == AlertStatus.close:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail=constants.alert_is_closed,
+        )
+    

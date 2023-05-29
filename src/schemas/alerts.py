@@ -8,6 +8,7 @@ from pydantic import BaseModel
 class AlertIn(BaseModel):
     """incoming alert data"""
     condition : str
+    comodity : str
     setpoint : float
     timeframe : str 
     alert_medium : str
@@ -21,6 +22,11 @@ class AlertOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class AlertEditIn(BaseModel):
+    """rquired ata for editing alert"""
+    alert_id :int
 
 
 class FullAlert(AlertIn):

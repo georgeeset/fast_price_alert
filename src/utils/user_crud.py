@@ -5,7 +5,6 @@ from models import user_model
 from schemas import constants
 from schemas.user import UserIn
 from sqlalchemy.orm import session
-from sqlalchemy import update
 import time
 
 

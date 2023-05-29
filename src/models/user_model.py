@@ -1,6 +1,6 @@
 """module contains data structure for user"""
 import bcrypt
-from sqlalchemy import ARRAY, Column, String, Integer
+from sqlalchemy import ARRAY, Column, Float, String, Integer
 from schemas import constants
 from config.db_config import Base
 from sqlalchemy.orm import relationship
@@ -14,7 +14,7 @@ class User(Base):
     first_name = Column(String(30), nullable=False)
     last_name = Column(String(30), nullable=False)
     username = Column(String(120), unique=True, nullable=False)
-    date_registered = Column(Integer, nullable=False)
+    date_registered = Column(Float, nullable=False)
     interests = Column(String(255), nullable=True)
     password = Column(String(255))
     

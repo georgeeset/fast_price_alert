@@ -24,7 +24,7 @@ class AlertOut(BaseModel):
         orm_mode = True
 
 
-class AlertEditIn(BaseModel):
+class AlertEditIn(AlertIn):
     """rquired ata for editing alert"""
     alert_id :int
 
@@ -38,3 +38,13 @@ class FullAlert(AlertIn):
 
     class Config:
         orm_mode = True
+
+
+class AlertDeleteIn(BaseModel):
+    """input data for deleting alert"""
+    alert_id : int
+
+
+class AlertDeleteFB(BaseModel):
+    """Feedback for deleted alert"""
+    status : str

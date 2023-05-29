@@ -4,14 +4,14 @@ from fastapi import FastAPI, status, HTTPException, Depends
 from models import user_model
 from models.alerts_model import AlertStatus
 from schemas import constants
-from schemas.alerts import AlertEditIn, AlertIn, AlertOut
+from schemas.alerts import AlertDeleteFB, AlertDeleteIn, AlertEditIn, AlertIn, AlertOut, FullAlert
 from schemas.user import FullUser, UpdateInterest, UserIn, UserOut
 from config.db_config import Base, engine, SessionLocal
 from sqlalchemy.orm import session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import jwt
 import time
-from utils.alert_crud import create_new_alert, get_alert_by_id
+from utils.alert_crud import create_new_alert, delete_alert, get_alert_by_id, get_all_alerts, update_alert
 from utils.user_crud import add_user, confirm_user, edit_user, get_user, user_exist
 
 
@@ -106,7 +106,8 @@ def create_alert(alert: AlertIn, user: FullUser = Depends(get_current_user), db:
         )
     return AlertOut.from_orm(data)
 
-@app.post('/user/edit-alert', response_class=AlertOut, status_code=status.HTTP_202_ACCEPTED, tags=["Update Alert"])
+
+@app.put('/user/edit-alert', response_model=AlertOut, status_code=status.HTTP_202_ACCEPTED, tags=["Update Alert"])
 def edit_alert(alert: AlertEditIn, user:FullUser = Depends(get_current_user), db: session = Depends(get_db)):
     """update alert if the alert is not expired and not closed"""
     #check if alert exists
@@ -116,15 +117,37 @@ def edit_alert(alert: AlertEditIn, user:FullUser = Depends(get_current_user), db
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=constants.alert_not_found
         )
-    if data.expired:
+    print(data.alert_medium)
+    now = time.time() # time in seconds since epoch
+    # convert expiration to seconds
+    expiry = data.time_created + (data.expiration * 60 * 60)
+    if now > expiry:
         raise HTTPException(
-            status_code=status.HTTP_406_NOT_ACCEPTABLE,
-            detail=constants.alert_has_expired,
+        status_code=status.HTTP_406_NOT_ACCEPTABLE,
+        detail=constants.alert_has_expired,
         )
-    
+
     if data.status == AlertStatus.close:
         raise HTTPException(
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail=constants.alert_is_closed,
         )
     
+    update_alert(alert=alert, db=db)
+    return alert
+
+@app.delete('/user/delete-alert', response_model=AlertDeleteFB, status_code=status.HTTP_202_ACCEPTED, tags=["Update Alert"])
+def alert_delete(alert: AlertDeleteIn, user:FullUser = Depends(get_current_user), db: session = Depends(get_db)):
+    data = delete_alert(alert_id=alert.alert_id, user_id=user.user_id, db=db)
+    if not data:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=constants.alert_not_found,
+        )
+    return AlertDeleteFB(status=constants.deleted)
+
+@app.get('/user/show-alerts', response_model=list[FullAlert], status_code=status.HTTP_200_OK, tags=["Get All Alerts"])
+def get_alerts( user: FullUser = Depends(get_current_user), db: session=Depends(get_db)):
+    # this_user = user_model.User(**user.dict())
+    data = get_all_alerts(user_id=user.user_id, db=db)
+    return data

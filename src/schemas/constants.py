@@ -56,5 +56,5 @@ deleted = 'deleted'
 
 an_error_occured= 'an error orrurede'
 two_hours = 120
-email_verification= 'Email_verification'
+email_verification= 'Email verification'
 message_sent = 'Message sent'

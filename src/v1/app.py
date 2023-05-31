@@ -157,16 +157,24 @@ def send_email(receiver: str, subject:str, body:str):
     email_service.send_mail(email_receiver=receiver, subject=subject, body=body)
     return {"message": "done"}
 
-@app.get('/update_emal', response_model=list[FullAlert], status_code=status.HTTP_200_OK, tags=["Get All Alerts"])
-def validate_email(user_email: VerifyEmailIn, user: FullUser =Depends(get_current_user)):
-    token = generate_token(last_name=user.last_name, first_name= user.first_name, user_id=user.user_id, expiry_date=constants.two_hours)
+@app.post('/update_emal', response_model=EmailSentOut, status_code=status.HTTP_200_OK, tags=["Add email Alert"])
+def validate_email(user_email: VerifyEmailIn, user: FullUser = Depends(get_current_user)):
+    token = generate_token(last_name=user.last_name,
+                           first_name= user.first_name,
+                           user_id=user.user_id,
+                           email=VerifyEmailIn.email,
+                           expiry_date=constants.two_hours,
+                           )
     if not token:
         raise HTTPException(
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail=constants.an_error_occured,
         )
     email_service.send_mail(email_receiver=user_email.email,
-                            subject=constants.Email_verification,
-                            body= email_verification.body)
+                            subject=constants.email_verification,
+                            body= email_verification.body(f'localhost:5000/confirm-email/{token}'))
     
-    return EmailSentOut(message=constants.message_sent, email=user_email)
+    return EmailSentOut(message=constants.message_sent, email=user_email.email)
+
+@app.get('/confirm-email/{token}', response_model=FullUser, status_code=status.HTTP_200_OK, tag=['Confirm email address'])
+def confirm_email(tomen:,):

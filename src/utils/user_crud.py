@@ -8,7 +8,7 @@ from sqlalchemy.orm import session
 import time
 
 
-def user_exist(username: str, db: session):
+def user_exist(username: str, db: session)->user_model.User:
     """check if user exist with given username"""
     return db.query(
         user_model.User

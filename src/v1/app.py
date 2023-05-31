@@ -1,9 +1,11 @@
 """Main app baise route"""
 
 from fastapi import FastAPI, status, HTTPException, Depends
+from auth.token import generate_token
 from models import user_model
 from models.alerts_model import AlertStatus
 from schemas import constants
+from schemas.alert_medium import EmailSentOut, VerifyEmailIn
 from schemas.alerts import AlertDeleteFB, AlertDeleteIn, AlertEditIn, AlertIn, AlertOut, FullAlert
 from schemas.user import FullUser, UpdateInterest, UserIn, UserOut
 from config.db_config import Base, engine, SessionLocal
@@ -11,6 +13,8 @@ from sqlalchemy.orm import session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import jwt
 import time
+from services import email_service
+from template import email_verification
 from utils.alert_crud import create_new_alert, delete_alert, get_alert_by_id, get_all_alerts, update_alert
 from utils.user_crud import add_user, confirm_user, edit_user, get_user, user_exist
 
@@ -60,11 +64,7 @@ async def token_gen( db: session = Depends(get_db), form_data: OAuth2PasswordReq
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=constants.invalid_credentials)
-    token_expiry_date = time.time() + constants.one_day
-    token = jwt.encode({constants.first_name: this_user.first_name,
-                        constants.last_name: this_user.last_name,
-                        constants.user_id: this_user.user_id,
-                        constants.exp: token_expiry_date }, jwt_secrete)
+    token = generate_token(first_name=this_user.first_name, last_name=this_user.last_name, user_id= this_user.user_id, expiry_date=constants.one_day)
     return {constants.access_token: token, constants.access_type: 'bearer'}
 
 @app.get('/my/account', response_model= FullUser)
@@ -141,8 +141,8 @@ def alert_delete(alert: AlertDeleteIn, user:FullUser = Depends(get_current_user)
     data = delete_alert(alert_id=alert.alert_id, user_id=user.user_id, db=db)
     if not data:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=constants.alert_not_found,
+        status_code=status.HTTP_406_NOT_ACCEPTABLE,
+        detail=constants.alert_not_found
         )
     return AlertDeleteFB(status=constants.deleted)
 
@@ -151,3 +151,22 @@ def get_alerts( user: FullUser = Depends(get_current_user), db: session=Depends(
     # this_user = user_model.User(**user.dict())
     data = get_all_alerts(user_id=user.user_id, db=db)
     return data
+
+@app.get('/send-email')
+def send_email(receiver: str, subject:str, body:str):
+    email_service.send_mail(email_receiver=receiver, subject=subject, body=body)
+    return {"message": "done"}
+
+@app.get('/update_emal', response_model=list[FullAlert], status_code=status.HTTP_200_OK, tags=["Get All Alerts"])
+def validate_email(user_email: VerifyEmailIn, user: FullUser =Depends(get_current_user)):
+    token = generate_token(last_name=user.last_name, first_name= user.first_name, user_id=user.user_id, expiry_date=constants.two_hours)
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail=constants.an_error_occured,
+        )
+    email_service.send_mail(email_receiver=user_email.email,
+                            subject=constants.Email_verification,
+                            body= email_verification.body)
+    
+    return EmailSentOut(message=constants.message_sent, email=user_email)

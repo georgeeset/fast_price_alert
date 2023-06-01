@@ -46,7 +46,6 @@ def update_alert(alert: AlertEditIn, db: session):
     )
     db.commit()
 
-
 def delete_alert(alert_id: int, user_id: int, db: session):
    i = db.query(
         alerts_model.Alerts
@@ -62,4 +61,8 @@ def delete_alert(alert_id: int, user_id: int, db: session):
    return True
 
 def get_all_alerts(user_id: int, db = session):
-    return db.query(alerts_model.Alerts).filter(alerts_model.Alerts.user_id == user_id).all()
+    return db.query(alerts_model.Alerts).filter(
+        alerts_model.Alerts.user_id == user_id
+        ).order_by(
+        alerts_model.Alerts.time_created.asc()
+        ).all()

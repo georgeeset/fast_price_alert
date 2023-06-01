@@ -6,5 +6,5 @@ def body(email_link):
 
 
     click here to verify your email address
-    http://192.168.186.156:5000/confirm-email/{email_link}
+    http://172.18.27.162:5000/confirm-email/{email_link}
     """

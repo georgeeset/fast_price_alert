@@ -13,7 +13,7 @@ interests = 'interests'
 alert_medium = 'alert_medium'
 # alert_medium_id = 'alert_medium_id'
 # whatsapp_verified = 'whatsapp_verified'
-# email_verified = 'email_verified'
+email_verified = 'email_verified'
 # telegram_verified = 'telegram_verified'
 user_id = 'user_id'
 

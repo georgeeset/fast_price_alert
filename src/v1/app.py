@@ -149,7 +149,6 @@ def edit_alert(alert: AlertEditIn, user: FullUser = Depends(get_current_user), d
     update_alert(alert=alert, db=db)
     return alert
 
-
 @app.delete('/user/delete-alert', response_model=AlertDeleteFB, status_code=status.HTTP_202_ACCEPTED, tags=["Update Alert"])
 def alert_delete(alert: AlertDeleteIn, user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
     data = delete_alert(alert_id=alert.alert_id, user_id=user.user_id, db=db)
@@ -160,13 +159,11 @@ def alert_delete(alert: AlertDeleteIn, user: FullUser = Depends(get_current_user
         )
     return AlertDeleteFB(status=constants.deleted)
 
-
 @app.get('/user/show-alerts', response_model=list[FullAlert], status_code=status.HTTP_200_OK, tags=["Get All Alerts"])
 def get_alerts(user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
     # this_user = user_model.User(**user.dict())
     data = get_all_alerts(user_id=user.user_id, db=db)
     return data
-
 
 @app.get('/send-email')
 def send_email(receiver: str, subject: str, body: str):
@@ -174,9 +171,8 @@ def send_email(receiver: str, subject: str, body: str):
                             subject=subject, body=body)
     return {"message": "done"}
 
-
 @app.post('/update_emal', response_model=EmailSentOut, status_code=status.HTTP_200_OK, tags=["Add email Alert"])
-def validate_email(user_email: VerifyEmailIn, user: FullUser = Depends(get_current_user)):
+def validate_email(user_email: VerifyEmailIn, user: FullUser = Depends(get_current_user), db: session=Depends(get_db)):
     token = generate_token(last_name=user.last_name,
                            first_name=user.first_name,
                            user_id=user.user_id,
@@ -189,7 +185,7 @@ def validate_email(user_email: VerifyEmailIn, user: FullUser = Depends(get_curre
             detail=constants.an_error_occured,
         )
 
-    report = check_email(email=user_email.email)
+    report = check_email(email=user_email.email, db=db)
 
     if report:
         raise HTTPException(
@@ -202,7 +198,6 @@ def validate_email(user_email: VerifyEmailIn, user: FullUser = Depends(get_curre
                             body=email_verification.body(token))
 
     return EmailSentOut(message=constants.message_sent, email=user_email.email)
-
 
 @app.get('/confirm-email/{token}', response_class=HTMLResponse, status_code=status.HTTP_200_OK, tags=['Confirm email address'])
 def confirm_email(token: str, db: session = Depends(get_db)):
@@ -221,7 +216,8 @@ def confirm_email(token: str, db: session = Depends(get_db)):
         ))
 
     db_job = add_email(email=payload.get(constants.email),
-                       db=db, user_id=payload.get(constants.user_id)
+                       first_name=payload.get(constants.first_name),
+                       db=db, user_id=payload.get(constants.user_id),
                        )
 
     # TODO add email to alert medium table

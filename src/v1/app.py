@@ -5,7 +5,7 @@ from auth.token import generate_token
 from models import user_model
 from models.alerts_model import AlertStatus
 from schemas import constants
-from schemas.alert_medium import EmailSentOut, VerifyEmailIn
+from schemas.alert_medium import EmailSentOut, VerifyEmailIn, VerifyTokenIn
 from schemas.alerts import AlertDeleteFB, AlertDeleteIn, AlertEditIn, AlertIn, AlertOut, FullAlert
 from schemas.user import FullUser, UpdateInterest, UserIn, UserOut
 from config.db_config import Base, engine, SessionLocal
@@ -27,6 +27,8 @@ jwt_secrete = constants.my_jwt_secrete
 app = FastAPI()
 
 # Dependency
+
+
 def get_db():
     db = SessionLocal()
     try:
@@ -35,45 +37,51 @@ def get_db():
         db.close()
 
 
-def get_current_user(db: session = Depends(get_db),token: str = Depends(oauth2_scheme)):
+def get_current_user(db: session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, jwt_secrete, algorithms=['HS256'])
     except:
         raise (HTTPException(
-            status_code= status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail=constants.invalid_credentials))
-    
+
     expires = payload.get(constants.exp)
     if time.time() > expires:
         raise (HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=constants.expired_token,
         ))
-    
+
     current_user = get_user(
         user_id=payload.get(constants.user_id),
         db=db)
-    
+
     return FullUser.from_orm(current_user)
 
 
-@app.post('/token', tags=["Generate Token"]) #take data from default password request form and generate token 
-async def token_gen( db: session = Depends(get_db), form_data: OAuth2PasswordRequestForm=Depends()):
-    this_user = confirm_user(username=form_data.username, password=form_data.password, db=db)
+# take data from default password request form and generate token
+@app.post('/token-gen', tags=["Generate Token"])
+async def token_gen(db: session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
+    this_user = confirm_user(username=form_data.username,
+                             password=form_data.password, db=db)
     if not this_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=constants.invalid_credentials)
-    token = generate_token(first_name=this_user.first_name, last_name=this_user.last_name, user_id= this_user.user_id, expiry_date=constants.one_day)
+    token = generate_token(first_name=this_user.first_name, last_name=this_user.last_name,
+                           user_id=this_user.user_id, expiry_date=constants.one_day)
     return {constants.access_token: token, constants.access_type: 'bearer'}
 
-@app.get('/my/account', response_model= FullUser)
+
+@app.get('/my/account', response_model=FullUser)
 def get_user_details(user: FullUser = Depends(get_current_user)):
     return user
 
+
 @app.get("/", tags=["root"])
-def read_root(token: str=Depends(oauth2_scheme)) -> dict:
+def read_root(token: str = Depends(oauth2_scheme)) -> dict:
     return {'the token': token}
+
 
 @app.post("/add-user", response_model=UserOut, status_code=status.HTTP_201_CREATED, tags=["Add User"])
 def create_user(user: UserIn, db: session = Depends(get_db)):
@@ -83,18 +91,20 @@ def create_user(user: UserIn, db: session = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=constants.user_already_exists)
-    
+
     new_user = add_user(user=user, db=db)
     return {constants.user_id: new_user.user_id}
 
+
 @app.put("/update/user", response_model=UserOut, status_code=status.HTTP_202_ACCEPTED, tags=["Edit User interests"])
-def update_user_interest( interests: UpdateInterest, db: session = Depends(get_db), user: FullUser = Depends(get_current_user)):
+def update_user_interest(interests: UpdateInterest, db: session = Depends(get_db), user: FullUser = Depends(get_current_user)):
     """update user interests"""
     user_update = user_model.User(**user.dict())
     user_update.interests = interests.interests
     edit_user(db=db, new_data=user_update)
     print(user_update.interests)
     return UserOut.from_orm(user_update)
+
 
 @app.post('/user/create-alert', response_model=AlertOut, status_code=status.HTTP_201_CREATED, tags=["Create Alert"])
 def create_alert(alert: AlertIn, user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
@@ -108,23 +118,24 @@ def create_alert(alert: AlertIn, user: FullUser = Depends(get_current_user), db:
 
 
 @app.put('/user/edit-alert', response_model=AlertOut, status_code=status.HTTP_202_ACCEPTED, tags=["Update Alert"])
-def edit_alert(alert: AlertEditIn, user:FullUser = Depends(get_current_user), db: session = Depends(get_db)):
+def edit_alert(alert: AlertEditIn, user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
     """update alert if the alert is not expired and not closed"""
-    #check if alert exists
-    data = get_alert_by_id(alert_id= alert.alert_id, user_id=user.user_id, db=db,)
+    # check if alert exists
+    data = get_alert_by_id(alert_id=alert.alert_id,
+                           user_id=user.user_id, db=db,)
     if not data:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=constants.alert_not_found
         )
     print(data.alert_medium)
-    now = time.time() # time in seconds since epoch
+    now = time.time()  # time in seconds since epoch
     # convert expiration to seconds
     expiry = data.time_created + (data.expiration * 60 * 60)
     if now > expiry:
         raise HTTPException(
-        status_code=status.HTTP_406_NOT_ACCEPTABLE,
-        detail=constants.alert_has_expired,
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail=constants.alert_has_expired,
         )
 
     if data.status == AlertStatus.close:
@@ -132,35 +143,40 @@ def edit_alert(alert: AlertEditIn, user:FullUser = Depends(get_current_user), db
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail=constants.alert_is_closed,
         )
-    
+
     update_alert(alert=alert, db=db)
     return alert
 
+
 @app.delete('/user/delete-alert', response_model=AlertDeleteFB, status_code=status.HTTP_202_ACCEPTED, tags=["Update Alert"])
-def alert_delete(alert: AlertDeleteIn, user:FullUser = Depends(get_current_user), db: session = Depends(get_db)):
+def alert_delete(alert: AlertDeleteIn, user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
     data = delete_alert(alert_id=alert.alert_id, user_id=user.user_id, db=db)
     if not data:
         raise HTTPException(
-        status_code=status.HTTP_406_NOT_ACCEPTABLE,
-        detail=constants.alert_not_found
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail=constants.alert_not_found
         )
     return AlertDeleteFB(status=constants.deleted)
 
+
 @app.get('/user/show-alerts', response_model=list[FullAlert], status_code=status.HTTP_200_OK, tags=["Get All Alerts"])
-def get_alerts( user: FullUser = Depends(get_current_user), db: session=Depends(get_db)):
+def get_alerts(user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
     # this_user = user_model.User(**user.dict())
     data = get_all_alerts(user_id=user.user_id, db=db)
     return data
 
+
 @app.get('/send-email')
-def send_email(receiver: str, subject:str, body:str):
-    email_service.send_mail(email_receiver=receiver, subject=subject, body=body)
+def send_email(receiver: str, subject: str, body: str):
+    email_service.send_mail(email_receiver=receiver,
+                            subject=subject, body=body)
     return {"message": "done"}
+
 
 @app.post('/update_emal', response_model=EmailSentOut, status_code=status.HTTP_200_OK, tags=["Add email Alert"])
 def validate_email(user_email: VerifyEmailIn, user: FullUser = Depends(get_current_user)):
     token = generate_token(last_name=user.last_name,
-                           first_name= user.first_name,
+                           first_name=user.first_name,
                            user_id=user.user_id,
                            email=VerifyEmailIn.email,
                            expiry_date=constants.two_hours,
@@ -172,9 +188,31 @@ def validate_email(user_email: VerifyEmailIn, user: FullUser = Depends(get_curre
         )
     email_service.send_mail(email_receiver=user_email.email,
                             subject=constants.email_verification,
-                            body= email_verification.body(f'localhost:5000/confirm-email/{token}'))
-    
+                            body=email_verification.body(f'localhost:5000/confirm-email/{token}'))
+
     return EmailSentOut(message=constants.message_sent, email=user_email.email)
 
+
 @app.get('/confirm-email/{token}', response_model=FullUser, status_code=status.HTTP_200_OK, tag=['Confirm email address'])
-def confirm_email(tomen:,):
+def confirm_email(token: VerifyTokenIn, db: session):
+    try:
+        payload = jwt.decode(token.token, jwt_secrete, algorithms=['HS256'])
+    except:
+        raise (HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=constants.invalid_credentials))
+
+    expires = payload.get(constants.exp)
+    if time.time() > expires:
+        raise (HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=constants.expired_token,
+        ))
+
+    current_user = get_user(
+        user_id=payload.get(constants.user_id),
+        db=db)
+
+    # TODO add email to alert medium table
+
+    return FullUser.from_orm(current_user)

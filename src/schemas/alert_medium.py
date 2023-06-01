@@ -9,11 +9,3 @@ class VerifyEmailIn(BaseModel):
 
 class EmailSentOut(VerifyEmailIn):
     message: str
-
-class EmailVerifiedOut(BaseModel):
-    message: str
-
-
-class VerifyTokenIn(BaseException):
-    token: str
-

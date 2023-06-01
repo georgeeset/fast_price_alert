@@ -1,11 +1,12 @@
 """Main app baise route"""
 
 from fastapi import FastAPI, status, HTTPException, Depends
+from fastapi.responses import HTMLResponse
 from auth.token import generate_token
 from models import user_model
 from models.alerts_model import AlertStatus
 from schemas import constants
-from schemas.alert_medium import EmailSentOut, VerifyEmailIn, VerifyTokenIn
+from schemas.alert_medium import EmailSentOut, VerifyEmailIn
 from schemas.alerts import AlertDeleteFB, AlertDeleteIn, AlertEditIn, AlertIn, AlertOut, FullAlert
 from schemas.user import FullUser, UpdateInterest, UserIn, UserOut
 from config.db_config import Base, engine, SessionLocal
@@ -14,8 +15,9 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import jwt
 import time
 from services import email_service
-from template import email_verification
+from template import email_verification, email_verified
 from utils.alert_crud import create_new_alert, delete_alert, get_alert_by_id, get_all_alerts, update_alert
+from utils.alert_medium_crud import add_email, check_email
 from utils.user_crud import add_user, confirm_user, edit_user, get_user, user_exist
 
 
@@ -60,8 +62,8 @@ def get_current_user(db: session = Depends(get_db), token: str = Depends(oauth2_
 
 
 # take data from default password request form and generate token
-@app.post('/token-gen', tags=["Generate Token"])
-async def token_gen(db: session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
+@app.post('/token', tags=["Generate Token"])
+def token_gen(db: session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
     this_user = confirm_user(username=form_data.username,
                              password=form_data.password, db=db)
     if not this_user:
@@ -178,7 +180,7 @@ def validate_email(user_email: VerifyEmailIn, user: FullUser = Depends(get_curre
     token = generate_token(last_name=user.last_name,
                            first_name=user.first_name,
                            user_id=user.user_id,
-                           email=VerifyEmailIn.email,
+                           email=user_email.email,
                            expiry_date=constants.two_hours,
                            )
     if not token:
@@ -186,17 +188,26 @@ def validate_email(user_email: VerifyEmailIn, user: FullUser = Depends(get_curre
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail=constants.an_error_occured,
         )
+
+    report = check_email(email=user_email.email)
+
+    if report:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail=constants.email_already_exist,
+        )
+
     email_service.send_mail(email_receiver=user_email.email,
                             subject=constants.email_verification,
-                            body=email_verification.body(f'localhost:5000/confirm-email/{token}'))
+                            body=email_verification.body(token))
 
     return EmailSentOut(message=constants.message_sent, email=user_email.email)
 
 
-@app.get('/confirm-email/{token}', response_model=FullUser, status_code=status.HTTP_200_OK, tag=['Confirm email address'])
-def confirm_email(token: VerifyTokenIn, db: session):
+@app.get('/confirm-email/{token}', response_class=HTMLResponse, status_code=status.HTTP_200_OK, tags=['Confirm email address'])
+def confirm_email(token: str, db: session = Depends(get_db)):
     try:
-        payload = jwt.decode(token.token, jwt_secrete, algorithms=['HS256'])
+        payload = jwt.decode(token, jwt_secrete, algorithms=['HS256'])
     except:
         raise (HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -209,10 +220,14 @@ def confirm_email(token: VerifyTokenIn, db: session):
             detail=constants.expired_token,
         ))
 
-    current_user = get_user(
-        user_id=payload.get(constants.user_id),
-        db=db)
+    db_job = add_email(email=payload.get(constants.email),
+                       db=db, user_id=payload.get(constants.user_id)
+                       )
 
     # TODO add email to alert medium table
+    if not db_job:
+        raise (HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=constants.operation_failed_msg))
 
-    return FullUser.from_orm(current_user)
+    return HTMLResponse(content=email_verified.success_page, status_code=200)

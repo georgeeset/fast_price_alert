@@ -11,7 +11,7 @@ class AlertMedium(Base):
 
     __tablename__ = constants.alert_medium
     alarm_medium_id = Column(Integer, primary_key=True)
-    whatsapp_verified = Column(String(20), unique=True nullable=True)
+    whatsapp_verified = Column(String(20), unique=True, nullable=True)
     email_verified = Column(String(120), unique=True, nullable=True)
     telegram_verified = Column(String(20), unique=True, nullable=True)
     user_id = Column(Integer, ForeignKey(constants.user_foriegn_key))

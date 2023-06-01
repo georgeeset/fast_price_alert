@@ -55,6 +55,8 @@ alert_is_closed = 'alert is closed'
 deleted = 'deleted'
 
 an_error_occured= 'an error orrurede'
-two_hours = 120
+two_hours = 7200
 email_verification= 'Email verification'
 message_sent = 'Message sent'
+email_already_exist = 'Email already exist'
+operation_failed_msg = 'operation failed'

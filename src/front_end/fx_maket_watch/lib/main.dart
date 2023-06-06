@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fx_maket_watch/screens/home_screen.dart';
+import 'package:fx_maket_watch/screens/home_screen/home_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

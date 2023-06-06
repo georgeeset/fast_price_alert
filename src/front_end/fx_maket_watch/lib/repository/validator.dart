@@ -28,4 +28,14 @@ class Validator {
 
     return null;
   }
+
+  String? validateName(String name) {
+    if (!RegExp(r"^[a-zA-Z]+$").hasMatch(name)) {
+      return 'only Alphabets';
+    }
+    if (name.length < 2) {
+      return 'Too short';
+    }
+    return null;
+  }
 }

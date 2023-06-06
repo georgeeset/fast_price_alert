@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fx_maket_watch/cubits/email_textfield_cubit/email_text_field_cubit.dart';
+import 'package:fx_maket_watch/cubits/name_textfield_cubit/name_input_cubit.dart';
 import 'package:fx_maket_watch/cubits/password_textfield_cubit/password_textfield_cubit.dart';
 import 'package:fx_maket_watch/widgets/email_input.dart';
+import 'package:fx_maket_watch/widgets/name_input.dart';
 import 'package:fx_maket_watch/widgets/password_input.dart';
 
 class LoginSignup extends StatelessWidget {
@@ -14,6 +16,7 @@ class LoginSignup extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => EmailTextfieldCubit()),
         BlocProvider(create: (_) => PasswordTextfieldCubit()),
+        BlocProvider(create: (_) => NameInputCubit())
       ],
       child: const SizedBox(
         height: 400,
@@ -26,6 +29,10 @@ class LoginSignup extends StatelessWidget {
               height: 10,
             ),
             PasswordInputField(),
+            SizedBox(
+              height: 10,
+            ),
+            NameInputField(),
           ],
         ),
       ),

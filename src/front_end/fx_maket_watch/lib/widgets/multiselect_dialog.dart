@@ -15,15 +15,11 @@ multiSelect(BuildContext context) {
   return DialogScreen(interests: interests);
 }
 
-class DialogScreen extends StatefulWidget {
-  const DialogScreen({super.key, required this.interests});
+class DialogScreen extends StatelessWidget {
   final List<String> interests;
 
-  @override
-  State<DialogScreen> createState() => _DialogScreenState();
-}
+  const DialogScreen({super.key, required this.interests});
 
-class _DialogScreenState extends State<DialogScreen> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -34,19 +30,17 @@ class _DialogScreenState extends State<DialogScreen> {
         child: BlocBuilder<InterestSelectCubit, List<String>>(
           builder: (context, selectedList) {
             return ListView(
-              children: widget.interests.map(
+              children: interests.map(
                 (item) {
                   return CheckboxListTile(
                     onChanged: (isSelected) {
-                      setState(() {
-                        if (isSelected == true) {
-                          context.read<InterestSelectCubit>().addSelected(item);
-                        } else {
-                          context
-                              .read<InterestSelectCubit>()
-                              .removeSelected(item);
-                        }
-                      });
+                      if (isSelected == true) {
+                        context.read<InterestSelectCubit>().addSelected(item);
+                      } else {
+                        context
+                            .read<InterestSelectCubit>()
+                            .removeSelected(item);
+                      }
                     },
                     value: selectedList.contains(item),
                     title: Text(item),
@@ -58,13 +52,11 @@ class _DialogScreenState extends State<DialogScreen> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () {},
-          child: const Text('Cancel'),
-        ),
         ElevatedButton(
-          onPressed: () {},
-          child: const Text('Submit'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Done'),
         ),
       ],
     );

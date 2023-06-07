@@ -51,7 +51,9 @@ class LoginSignup extends StatelessWidget {
             BlocBuilder<InterestSelectCubit, List<String>>(
                 builder: (context, state) {
               return Wrap(
-                children: state.map((e) => Text(e)).toList(),
+                children: state
+                    .map((e) => TextButton(onPressed: () {}, child: Text(e)))
+                    .toList(),
               );
             }),
           ],

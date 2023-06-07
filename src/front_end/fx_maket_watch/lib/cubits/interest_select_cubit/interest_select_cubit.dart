@@ -4,12 +4,12 @@ class InterestSelectCubit extends Cubit<List<String>> {
   InterestSelectCubit() : super([]);
 
   addSelected(item) {
-    state.add(item);
-    emit(state);
+    final List<String> newList = List.from(state)..add(item);
+    emit(newList);
   }
 
   removeSelected(item) {
-    state.remove(item);
-    emit(state);
+    final List<String> newList = List.from(state)..remove(item);
+    emit(newList);
   }
 }

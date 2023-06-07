@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fx_maket_watch/screens/home_screen/login_signup_widget.dart';
+import 'package:fx_maket_watch/screens/home_screen/slide_show_widget.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -27,10 +28,14 @@ class MyHomePage extends StatelessWidget {
           children: <Widget>[
             Container(
               height: 500,
-              child: Row(children: [
-                LoginSignup(),
-                // SlideShow(),
-              ]),
+              width: double.infinity,
+              color: Colors.blue[200],
+              child: const Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    LoginSignup(),
+                    Expanded(child: SlideShow()),
+                  ]),
             ),
             Container(
                 // child: Footer()

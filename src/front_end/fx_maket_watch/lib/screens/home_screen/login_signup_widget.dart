@@ -23,9 +23,13 @@ class LoginSignup extends StatelessWidget {
         BlocProvider(create: (_) => NameInputCubit()),
         BlocProvider(create: (_) => SurnameInputCubit()),
       ],
-      child: SizedBox(
+      child: Container(
         height: 800,
-        width: 200,
+        width: 300,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 5,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

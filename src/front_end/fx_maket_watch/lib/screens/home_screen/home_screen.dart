@@ -27,7 +27,7 @@ class MyHomePage extends StatelessWidget {
           children: <Widget>[
             Container(
               height: 500,
-              child: const Row(children: [
+              child: Row(children: [
                 LoginSignup(),
                 // SlideShow(),
               ]),

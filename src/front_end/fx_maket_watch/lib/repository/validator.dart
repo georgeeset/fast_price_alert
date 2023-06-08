@@ -29,6 +29,11 @@ class Validator {
     return null;
   }
 
+  String? validateUserName(String val) {
+    //TODO for confirmation of username while signinup
+    return null;
+  }
+
   String? validateName(String name) {
     if (!RegExp(r"^[a-zA-Z]+$").hasMatch(name)) {
       return 'only Alphabets';

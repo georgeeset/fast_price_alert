@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fx_maket_watch/cubits/login_signup_cubit/cubit/login_signup_cubit.dart';
 import 'package:fx_maket_watch/screens/home_screen/login_signup_widget.dart';
 import 'package:fx_maket_watch/screens/home_screen/slide_show_widget.dart';
 
@@ -30,12 +32,14 @@ class MyHomePage extends StatelessWidget {
               height: 500,
               width: double.infinity,
               color: Colors.blue[200],
-              child: const Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    LoginSignup(),
-                    Expanded(child: SlideShow()),
-                  ]),
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                BlocProvider<LoginSignupCubit>(
+                  create: (context) => LoginSignupCubit(),
+                  child: const LoginSignup(),
+                ),
+                const Expanded(child: SlideShow()),
+              ]),
             ),
             Container(
                 // child: Footer()

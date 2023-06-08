@@ -12,7 +12,7 @@ class SlideShow extends StatelessWidget {
       ),
       child: const Center(
         child: Text(
-          "Best Free Price Alert Server You \n Wide Range of Alert Medium Available.",
+          "Best Free Price Alert server you can trust \n Wide Range of Alert Medium Available.",
           style: TextStyle(fontSize: 38.0, color: Colors.white),
         ),
       ),

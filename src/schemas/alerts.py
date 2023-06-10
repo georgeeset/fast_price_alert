@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class AlertIn(BaseModel):
     """incoming alert data"""
     condition : str
-    comodity : str
+    commodity : str
     setpoint : float
     timeframe : str 
     alert_medium : str

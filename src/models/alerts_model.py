@@ -16,7 +16,7 @@ class Alerts(Base):
     """Alerts Table"""
     __tablename__ = constants.alerts
     alert_id = Column(Integer, primary_key=True)
-    comodity = Column(String(10), nullable=False)
+    commodity = Column(String(10), nullable=False)
     condition = Column(String(255), nullable=False)
     setpoint = Column(Float, nullable=False)
     timeframe = Column(String(12), nullable=False)

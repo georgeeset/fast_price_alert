@@ -35,7 +35,7 @@ def update_alert(alert: AlertEditIn, db: session):
     ).filter(
         alerts_model.Alerts.alert_id == alert.alert_id
     ).update(
-        {constants.comodity : alert.comodity,
+        {constants.commodity : alert.commodity,
          constants.condition : alert.condition,
          constants.setpoint : alert.setpoint,
          constants.timeframe : alert.timeframe,

@@ -35,7 +35,7 @@ def alert_medium_exists(user_id:int, db:session)->int:
     return None
 
 
-def add_email(email:str, first_name:str, user_id:int, db:session)->bool:
+def add_email_alert_medium(email:str, first_name:str, user_id:int, db:session)->bool:
     """ Add email to verified alert medium for the specific user"""
     #first confirm if the user exist in alert_medium table
     checker = db.query(
@@ -60,15 +60,15 @@ def add_email(email:str, first_name:str, user_id:int, db:session)->bool:
         )
 
     else:
-        new_medium = alert_medium_model.AlertMedium()
-        new_medium.email_verified = email
-        new_medium.user_id = user_id
+        new_medium = alert_medium_model.AlertMedium(email_verified = email, user_id=user_id)
+        # new_medium.email_verified = email
+        # new_medium.user_id = user_id
         db.add(new_medium)
 
     db.commit()
     return True
 
-def get_alert_medium(user_id: int, db:session)->dict:
+def get_user_alert_medium(user_id: int, db:session)->dict:
     """Get all alert medium for user to select during alert creation"""
     result = db.query(
         alert_medium_model.AlertMedium
@@ -77,5 +77,5 @@ def get_alert_medium(user_id: int, db:session)->dict:
     ).first()
 
     if result:
-        return result.__dict__()
+        return result.get_dict()
     return None

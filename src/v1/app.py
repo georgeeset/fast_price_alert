@@ -17,7 +17,7 @@ import time
 from services import email_service
 from template import email_verification, email_verified
 from utils.alert_crud import create_new_alert, delete_alert, get_alert_by_id, get_all_alerts, update_alert
-from utils.alert_medium_crud import add_email, check_email
+from utils.alert_medium_crud import add_email_alert_medium, check_email, get_user_alert_medium
 from utils.user_crud import add_user, confirm_user, edit_user, get_user, user_exist
 
 
@@ -215,7 +215,7 @@ def confirm_email(token: str, db: session = Depends(get_db)):
             detail=constants.expired_token,
         ))
 
-    db_job = add_email(email=payload.get(constants.email),
+    db_job = add_email_alert_medium(email=payload.get(constants.email),
                        first_name=payload.get(constants.first_name),
                        db=db, user_id=payload.get(constants.user_id),
                        )
@@ -236,11 +236,11 @@ async def getAssets():
 @app.get('/user/show-alert-medium', response_model=list[AlertMediumOut], status_code=status.HTTP_200_OK, tags=['Get All Registered AlertMedium'])
 def get_alert_medium(user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
     """Request for user's registered alert medium"""
-    thisMedium = get_all_alerts(user_id=user.user_id, db=db)
+    thisMedium = get_user_alert_medium(user_id=user.user_id, db=db)
     composed = []
     
     if thisMedium:
-        for key, value in thisMedium:
+        for key, value in thisMedium.items():
             if value:
                 composed.append(AlertMediumOut(alert=key, address=value))
 

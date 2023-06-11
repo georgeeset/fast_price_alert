@@ -17,3 +17,9 @@ class AlertMedium(Base):
     user_id = Column(Integer, ForeignKey(constants.user_foriegn_key))
 
     owner = relationship(constants.User, back_populates=constants.user_alert_medium_column)
+
+    def __dict__(self):
+        """dictionary representation of the instance"""
+        return {"Email" : self.email_verified,
+                "WhatsApp": self.whatsapp_verified,
+                "Telegram": self.telegram_verified,}

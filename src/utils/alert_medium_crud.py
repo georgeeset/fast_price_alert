@@ -68,4 +68,14 @@ def add_email(email:str, first_name:str, user_id:int, db:session)->bool:
     db.commit()
     return True
 
+def get_alert_medium(user_id: int, db:session)->dict:
+    """Get all alert medium for user to select during alert creation"""
+    result = db.query(
+        alert_medium_model.AlertMedium
+    ).filter(
+        alert_medium_model.AlertMedium.user_id == user_id
+    ).first()
 
+    if result:
+        return result.__dict__()
+    return None

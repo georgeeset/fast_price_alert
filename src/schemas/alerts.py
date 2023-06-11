@@ -48,3 +48,9 @@ class AlertDeleteIn(BaseModel):
 class AlertDeleteFB(BaseModel):
     """Feedback for deleted alert"""
     status : str
+
+class SupportedAssets(BaseModel):
+    """Conatians data format for supported currencies
+    an empty map for now as list of commodities will be listed inside
+    """
+    commodities: list

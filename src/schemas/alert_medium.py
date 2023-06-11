@@ -9,3 +9,8 @@ class VerifyEmailIn(BaseModel):
 
 class EmailSentOut(VerifyEmailIn):
     message: str
+
+class AlertMediumOut(BaseModel):
+    """Alert Medium Format"""
+    alert: str
+    address: str

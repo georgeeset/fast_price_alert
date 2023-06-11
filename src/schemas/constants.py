@@ -60,3 +60,9 @@ email_verification= 'Email verification'
 message_sent = 'Message sent'
 email_already_exist = 'Email already exist'
 operation_failed_msg = 'operation failed'
+
+supported_assets = [
+    {'Forex': ['EURUSD', 'EURJPY', 'USDCHF']},
+    {'METALS': ['GOLD']},
+    {'CRYPTO': ['BTCUSDT', 'ETHUSDT']}
+]

@@ -6,8 +6,8 @@ from auth.token import generate_token
 from models import user_model
 from models.alerts_model import AlertStatus
 from schemas import constants
-from schemas.alert_medium import EmailSentOut, VerifyEmailIn
-from schemas.alerts import AlertDeleteFB, AlertDeleteIn, AlertEditIn, AlertIn, AlertOut, FullAlert
+from schemas.alert_medium import AlertMediumOut, EmailSentOut, VerifyEmailIn
+from schemas.alerts import AlertDeleteFB, AlertDeleteIn, AlertEditIn, AlertIn, AlertOut, FullAlert, SupportedAssets
 from schemas.user import FullUser, UpdateInterest, UserIn, UserOut
 from config.db_config import Base, engine, SessionLocal
 from sqlalchemy.orm import session
@@ -227,3 +227,21 @@ def confirm_email(token: str, db: session = Depends(get_db)):
             detail=constants.operation_failed_msg))
 
     return HTMLResponse(content=email_verified.success_page, status_code=200)
+
+@app.get('/get-supported-assets', response_model=SupportedAssets, status_code=status.HTTP_200_OK, tags=["Get List of Supported Assets"])
+async def getAssets():
+    """Supported assets will be updated as design improves. for now we stick to this list"""
+    return SupportedAssets(commodities=constants.supported_assets)
+
+@app.get('/user/show-alert-medium', response_model=list[AlertMediumOut], status_code=status.HTTP_200_OK, tags=['Get All Registered AlertMedium'])
+def get_alert_medium(user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
+    """Request for user's registered alert medium"""
+    thisMedium = get_all_alerts(user_id=user.user_id, db=db)
+    composed = []
+    
+    if thisMedium:
+        for key, value in thisMedium:
+            if value:
+                composed.append(AlertMediumOut(alert=key, address=value))
+
+    return composed

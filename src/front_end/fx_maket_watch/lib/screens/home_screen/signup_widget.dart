@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fx_maket_watch/blocs/auth_bloc/bloc/authentication_bloc.dart';
 import 'package:fx_maket_watch/cubits/login_signup_cubit/cubit/login_signup_cubit.dart';
@@ -21,94 +22,97 @@ class Signup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const UserNameInput(),
-        const SizedBox(height: 10),
-        const PasswordInputField(),
-        const SizedBox(height: 10),
-        const RepeatPasswordInputField(),
-        const SizedBox(height: 10),
-        const NameInputField(),
-        const SizedBox(height: 10),
-        const SurnameInput(),
-        const SizedBox(height: 20),
-        BlocBuilder<InterestSelectCubit, List<String>>(
-          builder: (context, state) {
-            return OutlinedButton(
-              style: ButtonStyle(
-                  backgroundColor: state.isEmpty
-                      ? const MaterialStatePropertyAll(Colors.black45)
-                      : const MaterialStatePropertyAll(Colors.white10)),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return multiSelect(context);
-                  },
-                );
-              },
-              child: const Text('Interests +'),
-            );
-          },
-        ),
-        BlocBuilder<InterestSelectCubit, List<String>>(
+    return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const UserNameInput(),
+          const SizedBox(height: 10),
+          const PasswordInputField(),
+          const SizedBox(height: 10),
+          const RepeatPasswordInputField(),
+          const SizedBox(height: 10),
+          const NameInputField(),
+          const SizedBox(height: 10),
+          const SurnameInput(),
+          const SizedBox(height: 20),
+          BlocBuilder<InterestSelectCubit, List<String>>(
             builder: (context, state) {
-          return Wrap(
-            children: state
-                .map((e) => TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        e,
-                        style: const TextStyle(color: Colors.black54),
-                      ),
-                    ))
-                .toList(),
-          );
-        }),
-        const SizedBox(height: 30),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            OutlinedButton(
+              return OutlinedButton(
+                style: ButtonStyle(
+                    backgroundColor: state.isEmpty
+                        ? const MaterialStatePropertyAll(Colors.black45)
+                        : const MaterialStatePropertyAll(Colors.white10)),
                 onPressed: () {
-                  context.read<LoginSignupCubit>().loginSelected();
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return multiSelect(context);
+                    },
+                  );
                 },
-                child: const Text('Login')),
-            ElevatedButton(
-                onPressed: () {
-                  if (context.read<AuthenticationBloc>().state
-                      is AuthenticationLoadingState) {
-                    return;
-                  }
+                child: const Text('Interests +'),
+              );
+            },
+          ),
+          BlocBuilder<InterestSelectCubit, List<String>>(
+              builder: (context, state) {
+            return Wrap(
+              children: state
+                  .map((e) => TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          e,
+                          style: const TextStyle(color: Colors.black54),
+                        ),
+                      ))
+                  .toList(),
+            );
+          }),
+          const SizedBox(height: 30),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              OutlinedButton(
+                  onPressed: () {
+                    context.read<LoginSignupCubit>().loginSelected();
+                  },
+                  child: const Text('Login')),
+              ElevatedButton(
+                  onPressed: () {
+                    if (context.read<AuthenticationBloc>().state
+                        is AuthenticationLoadingState) {
+                      return;
+                    }
 
-                  var name = context.read<NameInputCubit>().state;
-                  var password = context.read<PasswordTextfieldCubit>().state;
-                  var surname = context.read<SurnameInputCubit>().state;
-                  var repeatPassword =
-                      context.read<RepeatPasswordTextfieldCubit>().state;
-                  var userName = context.read<UserNameInputCubit>().state;
-                  var interests = context.read<InterestSelectCubit>().state;
+                    var name = context.read<NameInputCubit>().state;
+                    var password = context.read<PasswordTextfieldCubit>().state;
+                    var surname = context.read<SurnameInputCubit>().state;
+                    var repeatPassword =
+                        context.read<RepeatPasswordTextfieldCubit>().state;
+                    var userName = context.read<UserNameInputCubit>().state;
+                    var interests = context.read<InterestSelectCubit>().state;
 
-                  if (name is NameInputOk &&
-                      surname is SurnameInputOk &&
-                      password is PasswordTextfieldOk &&
-                      repeatPassword is RepeatPasswordTextfieldOk &&
-                      userName is UserNameInputOk &&
-                      interests.isNotEmpty) {
-                    context.read<AuthenticationBloc>().add(RegisterEvent(
-                        name: name.name,
-                        surname: surname.surname,
-                        userName: userName.userName,
-                        password: password.password,
-                        interests: interests));
-                  }
-                },
-                child: const Text('Signup')),
-          ],
-        )
-      ],
+                    if (name is NameInputOk &&
+                        surname is SurnameInputOk &&
+                        password is PasswordTextfieldOk &&
+                        repeatPassword is RepeatPasswordTextfieldOk &&
+                        userName is UserNameInputOk &&
+                        interests.isNotEmpty) {
+                      context.read<AuthenticationBloc>().add(RegisterEvent(
+                          name: name.name,
+                          surname: surname.surname,
+                          userName: userName.userName,
+                          password: password.password,
+                          interests: interests));
+                    }
+                  },
+                  child: const Text('Signup')),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

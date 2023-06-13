@@ -11,9 +11,12 @@ class SlideShow extends StatelessWidget {
             image: AssetImage("assets/images/bg_2.jpeg"), fit: BoxFit.cover),
       ),
       child: const Center(
-        child: Text(
-          "Best Free Price Alert server you can trust \n Wide Range of Alert Medium Available.",
-          style: TextStyle(fontSize: 38.0, color: Colors.white),
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: Text(
+            "Best Free Price Alert server you can trust \n Wide Range of Alert Medium Available.",
+            style: TextStyle(fontSize: 38.0, color: Colors.white),
+          ),
         ),
       ),
     );

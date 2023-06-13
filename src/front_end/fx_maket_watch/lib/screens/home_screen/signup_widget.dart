@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fx_maket_watch/blocs/auth_bloc/bloc/authentication_bloc.dart';
 import 'package:fx_maket_watch/cubits/login_signup_cubit/cubit/login_signup_cubit.dart';
+import 'package:fx_maket_watch/cubits/name_textfield_cubit/name_input_cubit.dart';
+import 'package:fx_maket_watch/cubits/password_textfield_cubit/password_textfield_cubit.dart';
+import 'package:fx_maket_watch/cubits/repeat_password_textfield_cubit/cubit/repeat_password_textfield_cubit.dart';
+import 'package:fx_maket_watch/cubits/surname_textfield_cubit/surname_input_cubit.dart';
+import 'package:fx_maket_watch/cubits/username_textfield_cubit/cubit/user_name_input_cubit.dart';
+import 'package:fx_maket_watch/widgets/repeat_password_input.dart';
 import 'package:fx_maket_watch/widgets/username_input.dart';
 
 import '../../cubits/interest_select_cubit/interest_select_cubit.dart';
@@ -21,26 +28,42 @@ class Signup extends StatelessWidget {
         const SizedBox(height: 10),
         const PasswordInputField(),
         const SizedBox(height: 10),
+        const RepeatPasswordInputField(),
+        const SizedBox(height: 10),
         const NameInputField(),
         const SizedBox(height: 10),
         const SurnameInput(),
         const SizedBox(height: 20),
-        TextButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return multiSelect(context);
+        BlocBuilder<InterestSelectCubit, List<String>>(
+          builder: (context, state) {
+            return OutlinedButton(
+              style: ButtonStyle(
+                  backgroundColor: state.isEmpty
+                      ? const MaterialStatePropertyAll(Colors.black45)
+                      : const MaterialStatePropertyAll(Colors.white10)),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return multiSelect(context);
+                  },
+                );
               },
+              child: const Text('Interests +'),
             );
           },
-          child: const Text('Add Interest'),
         ),
         BlocBuilder<InterestSelectCubit, List<String>>(
             builder: (context, state) {
           return Wrap(
             children: state
-                .map((e) => TextButton(onPressed: () {}, child: Text(e)))
+                .map((e) => TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        e,
+                        style: const TextStyle(color: Colors.black54),
+                      ),
+                    ))
                 .toList(),
           );
         }),
@@ -55,7 +78,32 @@ class Signup extends StatelessWidget {
                 child: const Text('Login')),
             ElevatedButton(
                 onPressed: () {
-                  context.read<LoginSignupCubit>().signupSelected();
+                  if (context.read<AuthenticationBloc>().state
+                      is AuthenticationLoadingState) {
+                    return;
+                  }
+
+                  var name = context.read<NameInputCubit>().state;
+                  var password = context.read<PasswordTextfieldCubit>().state;
+                  var surname = context.read<SurnameInputCubit>().state;
+                  var repeatPassword =
+                      context.read<RepeatPasswordTextfieldCubit>().state;
+                  var userName = context.read<UserNameInputCubit>().state;
+                  var interests = context.read<InterestSelectCubit>().state;
+
+                  if (name is NameInputOk &&
+                      surname is SurnameInputOk &&
+                      password is PasswordTextfieldOk &&
+                      repeatPassword is RepeatPasswordTextfieldOk &&
+                      userName is UserNameInputOk &&
+                      interests.isNotEmpty) {
+                    context.read<AuthenticationBloc>().add(RegisterEvent(
+                        name: name.name,
+                        surname: surname.surname,
+                        userName: userName.userName,
+                        password: password.password,
+                        interests: interests));
+                  }
                 },
                 child: const Text('Signup')),
           ],

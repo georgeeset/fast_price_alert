@@ -23,6 +23,7 @@ class SurnameInput extends StatelessWidget {
             errorText: state is SurnameInputError ? state.message : null,
             hintText: 'FamilyName',
             labelText: labelText,
+            isDense: true,
             prefixIcon: const Icon(
               Icons.person,
             ),

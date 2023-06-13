@@ -21,3 +21,10 @@ class AuthenticatedState extends AuthenticationState {
   @override
   List<Object> get props => [apiKey];
 }
+
+class RegisteredState extends AuthenticationState {
+  @override
+  String toString() {
+    return 'REgisteredState';
+  }
+}

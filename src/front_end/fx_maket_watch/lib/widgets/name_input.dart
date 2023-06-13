@@ -23,6 +23,7 @@ class NameInputField extends StatelessWidget {
             errorText: state is NameInputError ? state.message : null,
             hintText: 'Balablue',
             labelText: labelText,
+            isDense: true,
             prefixIcon: const Icon(
               Icons.person,
             ),

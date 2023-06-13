@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fx_maket_watch/blocs/auth_bloc/bloc/authentication_bloc.dart';
 import 'package:fx_maket_watch/cubits/interest_select_cubit/interest_select_cubit.dart';
 import 'package:fx_maket_watch/screens/home_screen/home_screen.dart';
 
@@ -9,8 +10,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<InterestSelectCubit>(
-      create: (_) => InterestSelectCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<InterestSelectCubit>(
+          create: (context) => InterestSelectCubit(),
+        ),
+        BlocProvider<AuthenticationBloc>(
+          create: (context) => AuthenticationBloc(),
+        )
+      ],
       child: MaterialApp(
         title: 'FX Market Watch',
         theme: ThemeData(

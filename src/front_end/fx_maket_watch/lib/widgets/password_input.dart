@@ -36,6 +36,7 @@ class PasswordInputField extends StatelessWidget {
             errorText: state is PasswordTextfieldError ? state.message : null,
             hintText: '*******',
             labelText: labelText,
+            isDense: true,
             prefixIcon: const Icon(
               Icons.lock,
             ),

@@ -14,6 +14,7 @@ class AlertIn(BaseModel):
     alert_medium : str
     repeat_setpoint : int
     expiration : int | None = 24
+    note: str
 
 
 class AlertOut(BaseModel):

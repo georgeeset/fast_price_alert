@@ -27,6 +27,7 @@ setpoint = 'setpoint'
 alert_medium = 'alert_medium'
 repeat_setpoint = 'repeat_setpoint'
 expiration = 'expiration'
+note = 'note'
 # alert_count = 'alert_count'
 
 User ='User'

@@ -28,6 +28,7 @@ class Alerts(Base):
     time_created = Column(Float, nullable=False)
     # time must be converted to hours
     expiration = Column(Integer, nullable=False)
+    note = Column(String(250), nullable=False)
 
     owner = relationship(constants.User, back_populates=constants.user_alerts_column)
 

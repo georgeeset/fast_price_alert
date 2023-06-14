@@ -159,8 +159,9 @@ def alert_delete(alert: AlertDeleteIn, user: FullUser = Depends(get_current_user
         )
     return AlertDeleteFB(status=constants.deleted)
 
-@app.get('/user/show-alerts', response_model=list[FullAlert], status_code=status.HTTP_200_OK, tags=["Get All Alerts"])
+@app.get('/user/show-alerts', response_model=list[FullAlert], status_code=status.HTTP_200_OK, tags=["Get All Alerts", "Ordered by Time created"])
 def get_alerts(user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
+    """Get all alert ordered by time created"""
     # this_user = user_model.User(**user.dict())
     data = get_all_alerts(user_id=user.user_id, db=db)
     return data
@@ -238,7 +239,7 @@ def get_alert_medium(user: FullUser = Depends(get_current_user), db: session = D
     """Request for user's registered alert medium"""
     thisMedium = get_user_alert_medium(user_id=user.user_id, db=db)
     composed = []
-    
+
     if thisMedium:
         for key, value in thisMedium.items():
             if value:

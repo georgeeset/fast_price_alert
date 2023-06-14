@@ -42,6 +42,7 @@ def update_alert(alert: AlertEditIn, db: session):
          constants.alert_medium : alert.alert_medium,
          constants.repeat_setpoint: alert.repeat_setpoint,
          constants.expiration : alert.expiration,
+         constants.note : alert.note,
          }
     )
     db.commit()

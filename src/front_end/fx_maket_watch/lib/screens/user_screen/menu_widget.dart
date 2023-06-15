@@ -60,11 +60,14 @@ class MenuItem extends StatelessWidget {
           width: double.infinity,
           color: isActive ? Colors.black87 : Colors.white,
           child: Center(
-            child: Text(
-              titleString,
-              style: TextStyle(
-                fontSize: 18,
-                color: isActive ? Colors.white : Colors.black,
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: Text(
+                titleString,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: isActive ? Colors.white : Colors.black,
+                ),
               ),
             ),
           ),

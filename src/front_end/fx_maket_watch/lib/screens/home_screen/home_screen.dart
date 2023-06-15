@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fx_maket_watch/blocs/auth_bloc/bloc/authentication_bloc.dart';
 import 'package:fx_maket_watch/cubits/login_signup_cubit/cubit/login_signup_cubit.dart';
 import 'package:fx_maket_watch/screens/home_screen/login_signup_widget.dart';
 import 'package:fx_maket_watch/screens/home_screen/slide_show_widget.dart';
@@ -47,21 +48,26 @@ class MyHomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  // Container(
-                  //   height: deviceSize.height * 0.7,
-                  //   width: double.infinity,
-                  //   padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  //   child: Row(
-                  //       crossAxisAlignment: CrossAxisAlignment.center,
-                  //       children: [
-                  //         BlocProvider<LoginSignupCubit>(
-                  //           create: (context) => LoginSignupCubit(),
-                  //           child: const LoginSignup(),
-                  //         ),
-                  //         const Expanded(child: SlideShow()),
-                  //       ]),
-                  // ),
-                  UserScreen(deviceSize: deviceSize),
+                  BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                    builder: (context, authState) => authState
+                            is AuthenticatedState
+                        ? UserScreen(deviceSize: deviceSize)
+                        : Container(
+                            height: deviceSize.height * 0.7,
+                            width: double.infinity,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  BlocProvider<LoginSignupCubit>(
+                                    create: (context) => LoginSignupCubit(),
+                                    child: const LoginSignup(),
+                                  ),
+                                  const Expanded(child: SlideShow()),
+                                ]),
+                          ),
+                  ),
                   Container(
                       // child: Footer()
                       )

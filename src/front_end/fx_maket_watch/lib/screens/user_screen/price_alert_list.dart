@@ -27,7 +27,12 @@ class PriceAlertItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Container(child: Row(children: [Container(width: 10,height: double.infinity,color: Colors.red)],)),
-    )
+      child: Container(
+          child: Row(
+        children: [
+          Container(width: 10, height: double.infinity, color: Colors.red)
+        ],
+      )),
+    );
   }
 }

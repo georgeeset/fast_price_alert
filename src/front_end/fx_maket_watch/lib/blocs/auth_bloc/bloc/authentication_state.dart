@@ -28,3 +28,10 @@ class RegisteredState extends AuthenticationState {
     return 'REgisteredState';
   }
 }
+
+class AuthenticationError extends AuthenticationState {
+  final String message;
+  const AuthenticationError({required this.message});
+  @override
+  String toString() => 'AuthenticationError State';
+}

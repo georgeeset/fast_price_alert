@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:fx_maket_watch/repository/util_functions.dart';
+import 'package:fx_maket_watch/services/api_calls.dart' as service;
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -14,10 +15,13 @@ class AuthenticationBloc
 
     on<LoginEvent>((event, emit) async {
       emit(AuthenticationLoadingState());
-      //TODO send emal and passordffor authentaication
-      print(event.userName);
-      print(event.password);
-      emit(AuthenticatedState(apiKey: 'apiKey'));
+      await service
+          .login(userName: event.userName, password: event.password)
+          .then((value) => emit(
+                AuthenticatedState(apiKey: value),
+              ))
+          .catchError(
+              (err) => emit(AuthenticationError(message: err.toString())));
     });
 
     on<LogoutEvent>((event, emit) async {
@@ -26,19 +30,33 @@ class AuthenticationBloc
 
     on<RegisterEvent>((event, emit) async {
       emit(AuthenticationLoadingState());
-      //TODO send registration message
-      debugPrint(event.name);
-      debugPrint(event.password);
-      emit(RegisteredState());
+
+      try {
+        var response = await service.signup(
+          firstName: event.firstName,
+          userName: event.userName,
+          password: event.password,
+          surname: event.surname,
+          interests: event.interests,
+        );
+
+        if (response.statusCode == 201) {
+          emit(RegisteredState());
+        } else {
+          emit(AuthenticationError(message: valueFromStrMap(response.body)));
+        }
+      } catch (e) {
+        emit(AuthenticationError(message: e.toString()));
+      }
     });
   }
 
   @override
   void onChange(Change<AuthenticationState> change) {
-    debugPrint('state changed');
-    debugPrint(change.currentState.toString());
-    debugPrint('New State');
-    debugPrint(change.nextState.toString());
+    print('state changed');
+    print(change.currentState.toString());
+    print('New State');
+    print(change.nextState.toString());
     super.onChange(change);
   }
 }

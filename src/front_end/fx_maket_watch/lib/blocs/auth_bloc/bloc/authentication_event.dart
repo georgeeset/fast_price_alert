@@ -25,14 +25,14 @@ class LogoutEvent extends AuthenticationEvent {
 }
 
 class RegisterEvent extends AuthenticationEvent {
-  final String name;
+  final String firstName;
   final String surname;
   final String userName;
   final String password;
   final List<String> interests;
 
   const RegisterEvent({
-    required this.name,
+    required this.firstName,
     required this.surname,
     required this.userName,
     required this.password,
@@ -41,7 +41,7 @@ class RegisterEvent extends AuthenticationEvent {
 
   @override
   List<Object> get props => [
-        name,
+        firstName,
         surname,
         userName,
         surname,

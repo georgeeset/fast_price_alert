@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fx_maket_watch/blocs/auth_bloc/bloc/authentication_bloc.dart';
 import 'package:fx_maket_watch/cubits/login_signup_cubit/cubit/login_signup_cubit.dart';
@@ -15,6 +14,7 @@ import '../../cubits/interest_select_cubit/interest_select_cubit.dart';
 import '../../widgets/multiselect_dialog.dart';
 import '../../widgets/name_input.dart';
 import '../../widgets/password_input.dart';
+import '../../widgets/snackbar_message_widget.dart';
 import '../../widgets/surname_input.dart';
 
 class Signup extends StatelessWidget {
@@ -75,40 +75,62 @@ class Signup extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               OutlinedButton(
-                  onPressed: () {
+                onPressed: () {
+                  context.read<UserNameInputCubit>().updateUserName(name: '');
+                  context.read<PasswordTextfieldCubit>().updateText('');
+                  context.read<LoginSignupCubit>().loginSelected();
+                },
+                child: const Text('Login'),
+              ),
+              BlocListener<AuthenticationBloc, AuthenticationState>(
+                listener: (context, state) {
+                  if (state is RegisteredState) {
+                    showSnackBar(
+                      context: context,
+                      message: "Registeration Successful !",
+                    );
                     context.read<LoginSignupCubit>().loginSelected();
-                  },
-                  child: const Text('Login')),
-              ElevatedButton(
-                  onPressed: () {
-                    if (context.read<AuthenticationBloc>().state
-                        is AuthenticationLoadingState) {
-                      return;
+                  } else {
+                    if (state is AuthenticationError) {
+                      showSnackBar(
+                        context: context,
+                        message: state.message,
+                      );
                     }
+                  }
+                },
+                child: ElevatedButton(
+                    onPressed: () {
+                      if (context.read<AuthenticationBloc>().state
+                          is AuthenticationLoadingState) {
+                        return;
+                      }
 
-                    var name = context.read<NameInputCubit>().state;
-                    var password = context.read<PasswordTextfieldCubit>().state;
-                    var surname = context.read<SurnameInputCubit>().state;
-                    var repeatPassword =
-                        context.read<RepeatPasswordTextfieldCubit>().state;
-                    var userName = context.read<UserNameInputCubit>().state;
-                    var interests = context.read<InterestSelectCubit>().state;
+                      var name = context.read<NameInputCubit>().state;
+                      var password =
+                          context.read<PasswordTextfieldCubit>().state;
+                      var surname = context.read<SurnameInputCubit>().state;
+                      var repeatPassword =
+                          context.read<RepeatPasswordTextfieldCubit>().state;
+                      var userName = context.read<UserNameInputCubit>().state;
+                      var interests = context.read<InterestSelectCubit>().state;
 
-                    if (name is NameInputOk &&
-                        surname is SurnameInputOk &&
-                        password is PasswordTextfieldOk &&
-                        repeatPassword is RepeatPasswordTextfieldOk &&
-                        userName is UserNameInputOk &&
-                        interests.isNotEmpty) {
-                      context.read<AuthenticationBloc>().add(RegisterEvent(
-                          name: name.name,
-                          surname: surname.surname,
-                          userName: userName.userName,
-                          password: password.password,
-                          interests: interests));
-                    }
-                  },
-                  child: const Text('Signup')),
+                      if (name is NameInputOk &&
+                          surname is SurnameInputOk &&
+                          password is PasswordTextfieldOk &&
+                          repeatPassword is RepeatPasswordTextfieldOk &&
+                          userName is UserNameInputOk &&
+                          interests.isNotEmpty) {
+                        context.read<AuthenticationBloc>().add(RegisterEvent(
+                            firstName: name.name,
+                            surname: surname.surname,
+                            userName: userName.userName,
+                            password: password.password,
+                            interests: interests));
+                      }
+                    },
+                    child: const Text('Signup')),
+              ),
             ],
           )
         ],

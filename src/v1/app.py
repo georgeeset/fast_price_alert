@@ -14,6 +14,7 @@ from sqlalchemy.orm import session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import jwt
 import time
+from fastapi.middleware.cors import CORSMiddleware
 from services import email_service
 from template import email_verification, email_verified
 from utils.alert_crud import create_new_alert, delete_alert, get_alert_by_id, get_all_alerts, update_alert
@@ -30,6 +31,15 @@ app = FastAPI()
 
 # Dependency
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    )
 
 def get_db():
     db = SessionLocal()

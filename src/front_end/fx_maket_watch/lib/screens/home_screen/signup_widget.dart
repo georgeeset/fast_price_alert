@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fx_maket_watch/blocs/auth_bloc/bloc/authentication_bloc.dart';
+import 'package:fx_maket_watch/blocs/auth_bloc/authentication_bloc.dart';
 import 'package:fx_maket_watch/cubits/login_signup_cubit/cubit/login_signup_cubit.dart';
 import 'package:fx_maket_watch/cubits/name_textfield_cubit/name_input_cubit.dart';
 import 'package:fx_maket_watch/cubits/password_textfield_cubit/password_textfield_cubit.dart';

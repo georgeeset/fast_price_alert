@@ -5,16 +5,16 @@ import "model_constants.dart" as constants;
 class PriceAlert {
   final String condition;
   final String commodity;
-  final int setpoint;
+  final double setpoint;
   final String timeFrame;
   final String alertMedium;
   final int repeatSetpoint;
   final int? expirationInHrs;
   final int? expirationInSecs;
-  final int alertId;
+  final int? alertId;
   final int? alertCount;
-  final int timeCreated;
-  final int userId;
+  final int? timeCreated;
+  final int? userId;
   final String note;
 
   const PriceAlert({
@@ -26,10 +26,10 @@ class PriceAlert {
     required this.repeatSetpoint,
     this.expirationInHrs,
     this.expirationInSecs,
-    required this.alertId,
+    this.alertId,
     this.alertCount,
-    required this.timeCreated,
-    required this.userId,
+    this.timeCreated,
+    this.userId,
     required this.note,
   });
 
@@ -54,7 +54,7 @@ class PriceAlert {
   updateAlert({
     String? condition,
     String? commodity,
-    int? setpoint,
+    double? setpoint,
     String? timeFrame,
     String? alertMedium,
     int? expirationInHrs,

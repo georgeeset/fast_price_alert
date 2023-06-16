@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fx_maket_watch/blocs/auth_bloc/bloc/authentication_bloc.dart';
+import 'package:fx_maket_watch/blocs/auth_bloc/authentication_bloc.dart';
 import 'package:fx_maket_watch/cubits/interest_select_cubit/interest_select_cubit.dart';
 import 'package:fx_maket_watch/screens/home_screen/home_screen.dart';
 

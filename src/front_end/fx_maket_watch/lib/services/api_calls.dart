@@ -69,3 +69,52 @@ Future<String> login(
     throw (e.toString());
   }
 }
+
+Future<List<Map<String, dynamic>>> getSupportedAssets() async {
+  var address = '${constants.apiUrl}/get-supported-assets';
+  var link = Uri.parse(address);
+
+  return await get(link, headers: constants.getReqHead).then((value) {
+    if (value.statusCode == 200) {
+      var data = '[${value.body}]';
+
+      List<dynamic> listify = jsonDecode(data) as List<dynamic>;
+      List<dynamic> realData =
+          listify[0][constants.commodities] as List<dynamic>;
+      List<Map<String, dynamic>> newData =
+          realData.map((e) => e as Map<String, dynamic>).toList();
+
+      return newData;
+    } else {
+      throw (json.decode(value.body));
+    }
+  }).onError((error, stackTrace) => throw (error.toString()));
+}
+
+Future<List<Map<String, dynamic>>> getUserAlerMedium(
+    {required String token}) async {
+  var address = '${constants.apiUrl}/user/show-alert-medium';
+  var link = Uri.parse(address);
+  var updatedHead = constants.getReqHead;
+  updatedHead.addAll({'Authorization': 'Bearer $token'});
+
+  return await get(link, headers: constants.getReqHead).then((value) {
+    if (value.statusCode == 200) {
+      // var data = '[${value.body}]';
+
+      List<dynamic> listify = jsonDecode(value.body) as List<dynamic>;
+      // print(listify);
+      // List<dynamic> realData =
+      //     listify[0][constants.commodities] as List<dynamic>;
+
+      // print(realData);
+
+      List<Map<String, dynamic>> newData =
+          listify.map((e) => e as Map<String, dynamic>).toList();
+      // print(newData);
+      return newData;
+    } else {
+      throw (json.decode(value.body));
+    }
+  }).onError((error, stackTrace) => throw (error.toString()));
+}

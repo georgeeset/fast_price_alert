@@ -10,28 +10,27 @@ class PriceAlert {
   final String alertMedium;
   final int repeatSetpoint;
   final int? expirationInHrs;
-  final int? expirationInSecs;
+  final DateTime? expirationInDate;
   final int? alertId;
   final int? alertCount;
   final int? timeCreated;
   final int? userId;
   final String note;
 
-  const PriceAlert({
-    required this.condition,
-    required this.commodity,
-    required this.setpoint,
-    required this.timeFrame,
-    required this.alertMedium,
-    required this.repeatSetpoint,
-    this.expirationInHrs,
-    this.expirationInSecs,
-    this.alertId,
-    this.alertCount,
-    this.timeCreated,
-    this.userId,
-    required this.note,
-  });
+  const PriceAlert(
+      {required this.condition,
+      required this.commodity,
+      required this.setpoint,
+      required this.timeFrame,
+      required this.alertMedium,
+      required this.repeatSetpoint,
+      this.expirationInHrs,
+      this.expirationInDate,
+      this.alertId,
+      this.alertCount,
+      this.timeCreated,
+      this.userId,
+      required this.note});
 
   factory PriceAlert.fromJson({required Map<String, dynamic> json}) {
     return PriceAlert(
@@ -42,7 +41,6 @@ class PriceAlert {
       alertMedium: json[constants.alertMedium],
       repeatSetpoint: json[constants.repeatSetpoint],
       expirationInHrs: json[constants.expiration],
-      expirationInSecs: json[constants.expiration],
       alertId: json[constants.alertId],
       alertCount: json[constants.alertCount],
       timeCreated: json[constants.timeCreated],
@@ -59,6 +57,7 @@ class PriceAlert {
     String? alertMedium,
     int? expirationInHrs,
     int? repeatSetpoint,
+    DateTime? expirationInDate,
     String? note,
   }) {
     return PriceAlert(
@@ -72,6 +71,7 @@ class PriceAlert {
       timeCreated: timeCreated,
       alertId: alertId,
       userId: userId,
+      expirationInDate: expirationInDate ?? this.expirationInDate,
     );
   }
 
@@ -84,6 +84,7 @@ class PriceAlert {
       constants.alertMedium: alertMedium,
       constants.repeatSetpoint: repeatSetpoint,
       constants.note: note,
+      constants.expiration: expirationInHrs,
     };
     if (forUpdate) jsonData.addAll({constants.alertId: alertId});
 

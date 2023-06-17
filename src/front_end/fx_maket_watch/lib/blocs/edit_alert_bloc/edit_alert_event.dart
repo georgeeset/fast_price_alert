@@ -33,7 +33,8 @@ class UpdateCommodity extends EditAlertEvent {
 }
 
 class UpdateSetpoint extends EditAlertEvent {
-  final double setpoint;
+  ///to be converted to double before updating
+  final String setpoint;
 
   const UpdateSetpoint({required this.setpoint});
 
@@ -45,7 +46,7 @@ class UpdateSetpoint extends EditAlertEvent {
 }
 
 class UpdateTimeFrame extends EditAlertEvent {
-  final int timeFrame;
+  final String timeFrame;
 
   const UpdateTimeFrame({required this.timeFrame});
 
@@ -91,4 +92,15 @@ class UpdateNote extends EditAlertEvent {
 
   @override
   String toString() => 'UpdateNoteEvent';
+}
+
+class UpdateExpiration extends EditAlertEvent {
+  final DateTime selectedDate;
+  const UpdateExpiration({required this.selectedDate});
+
+  @override
+  List<Object> get props => [selectedDate];
+
+  @override
+  String toString() => 'UpdateExpirationState';
 }

@@ -11,3 +11,10 @@ String valueFromStrMap(String raw) {
   // return {broken[0]: broken[1]};
   return broken[1];
 }
+
+// Map<String, List<String>> getListOfMap(List<dynamic> data) {
+//   //first conver to Map<String, dynamic>
+
+//   List<Map<String, dynamic>> newData =
+//       data.map((e) => e as Map<String, dynamic>).toList();
+// }

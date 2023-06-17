@@ -27,7 +27,20 @@ Base.metadata.create_all(bind=engine)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 jwt_secrete = constants.my_jwt_secrete
 
-app = FastAPI()
+app = FastAPI(
+    title="Fast Price Alert API",
+    version='0.0.13',
+    description=email_verification.description,
+    contact={
+        "name": "George Esetevbe",
+        "url": "https://www.esetautomation.tech",
+        "email": "georgeperfect4u@gmail.com",
+    },
+    license_info={
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+    },
+)
 
 # Dependency
 
@@ -169,7 +182,7 @@ def alert_delete(alert: AlertDeleteIn, user: FullUser = Depends(get_current_user
         )
     return AlertDeleteFB(status=constants.deleted)
 
-@app.get('/user/show-alerts', response_model=list[FullAlert], status_code=status.HTTP_200_OK, tags=["Get All Alerts", "Ordered by Time created"])
+@app.get('/user/show-alerts', response_model=list[FullAlert], status_code=status.HTTP_200_OK, tags=["Get All Alerts",])
 def get_alerts(user: FullUser = Depends(get_current_user), db: session = Depends(get_db)):
     """Get all alert ordered by time created"""
     # this_user = user_model.User(**user.dict())

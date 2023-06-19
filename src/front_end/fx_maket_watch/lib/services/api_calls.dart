@@ -1,9 +1,12 @@
 ///api calls for
 
+import 'dart:async';
 import 'dart:convert';
 
 import "package:fx_maket_watch/constants.dart" as constants;
 import 'package:http/http.dart';
+
+import '../models/alert_model.dart';
 
 // class SimpleResponse {
 //   final String field;
@@ -46,7 +49,7 @@ Future<Response> signup({
 /// returns the user's token which will be used for
 /// other activities
 ///
-Future<String> login(
+Future<Response> login(
     {required String userName, required String password}) async {
   var address = '${constants.apiUrl}/token';
 
@@ -56,18 +59,22 @@ Future<String> login(
     constants.password: password,
   };
 
-  try {
-    var response =
-        await post(link, headers: constants.loginHead, body: loginBody);
+  var response = await post(link, headers: constants.loginHead, body: loginBody)
+      .then((value) => value)
+      .onError(
+        (error, stackTrace) => throw (error.toString()),
+      );
 
-    if (response.statusCode == 200) {
-      return response.body;
-    } else {
-      throw (response.body);
-    }
-  } catch (e) {
-    throw (e.toString());
-  }
+  return response;
+
+  // if (response.statusCode == 200) {
+  //   var jsonData = jsonDecode(response.body) as List<String>;
+
+  //   print(jsonData);
+  //   return jsonData.toString();
+  // } else {
+  //   throw (response.body);
+  // }
 }
 
 Future<List<Map<String, dynamic>>> getSupportedAssets() async {
@@ -113,8 +120,57 @@ Future<List<Map<String, dynamic>>> getUserAlerMedium(
           listify.map((e) => e as Map<String, dynamic>).toList();
       // print(newData);
       return newData;
-    } else {
-      throw (json.decode(value.body));
     }
+    if (value.statusCode == 401) {
+      //let user know that authentication error has occured
+      //maybe because of expored auth credentail
+      throw ('401');
+    }
+    throw (json.decode(value.body));
   }).onError((error, stackTrace) => throw (error.toString()));
+}
+
+Future<Map<String, dynamic>> addAlert(
+    {required PriceAlert newAlert, required String token}) async {
+  var address = '${constants.apiUrl}/user/create-alert';
+  var link = Uri.parse(address);
+  var updatedHead = constants.getReqHead; //constants.loginHead;
+  var myBody = newAlert.toJson();
+  updatedHead.addAll(
+      {'accept': ' application/json', 'Authorization': 'Bearer $token'});
+
+  try {
+    var response =
+        await post(link, body: jsonEncode(myBody), headers: updatedHead);
+    if (response.statusCode == 201) {
+      // print(response.body);
+      return json.decode(response.body);
+    } else {
+      // print(response.statusCode);
+
+      throw (response.body.toString());
+    }
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<String> getAllAlerts({required String token}) async {
+  var address = '${constants.apiUrl}/user/show-alerts';
+  var link = Uri.parse(address);
+  var updatedHead = constants.getReqHead; //constants.loginHead;
+  updatedHead.addAll(
+      {'accept': ' application/json', 'Authorization': 'Bearer $token'});
+
+  try {
+    var response = await get(link, headers: updatedHead);
+    if (response.statusCode == 200) {
+      // print(response.body);
+      return response.body;
+    } else {
+      throw (response.body);
+    }
+  } catch (e) {
+    throw (e.toString());
+  }
 }

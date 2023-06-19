@@ -72,6 +72,7 @@ class PriceAlert {
       alertId: alertId,
       userId: userId,
       expirationInDate: expirationInDate ?? this.expirationInDate,
+      expirationInHrs: expirationInHrs ?? this.expirationInHrs,
     );
   }
 

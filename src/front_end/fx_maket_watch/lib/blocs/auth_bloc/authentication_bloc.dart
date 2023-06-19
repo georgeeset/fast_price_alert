@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fx_maket_watch/repository/util_functions.dart';
@@ -9,13 +11,12 @@ part 'authentication_state.dart';
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc()
-      : super(
-          //AuthenticationInitial()
-          const AuthenticatedState(
-            apiKey:
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiR2VvcmdlIiwibGFzdF9uYW1lIjoiRXNldGV2YmUiLCJ1c2VyX2lkIjozLCJleHAiOjE2ODcwNTQ5NTYuNDg0MTU0MiwiZW1haWwiOm51bGx9.UUAjYln0AfqOY2TC3NU7MyevXtvgP77Cg2GMALAtnHE',
-          ),
-        ) {
+      : super(AuthenticationInitial()
+            // const AuthenticatedState(
+            //   apiKey:
+            //       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiR2VvcmdlIiwibGFzdF9uYW1lIjoiRXNldGV2YmUiLCJ1c2VyX2lkIjozLCJleHAiOjE2ODcxNDQ4ODIuNTc2MTg1MiwiZW1haWwiOm51bGx9.1ELihq-v4FXZcIaM6J3HUjgTvb_yczIG--7JoLpK9BU',
+            // ),
+            ) {
     on<AppStartedEvent>((event, emit) async {
       emit(AuthenticationInitial());
     });
@@ -24,11 +25,26 @@ class AuthenticationBloc
       emit(AuthenticationLoadingState());
       await service
           .login(userName: event.userName, password: event.password)
-          .then((value) => emit(
-                AuthenticatedState(apiKey: value),
-              ))
-          .catchError(
-              (err) => emit(AuthenticationError(message: err.toString())));
+          .then(
+        (value) {
+          // emit(AuthenticatedState(apiKey: value));
+          if (value.statusCode == 200) {
+            var smallData = value.body;
+
+            var jsoned = jsonDecode(smallData);
+
+            emit(AuthenticatedState(apiKey: jsoned['access_token']));
+          } else {
+            emit(
+              AuthenticationError(message: value.body),
+            );
+          }
+        },
+      ).catchError((err) {
+        emit(
+          AuthenticationError(message: err.toString()),
+        );
+      });
     });
 
     on<LogoutEvent>((event, emit) async {

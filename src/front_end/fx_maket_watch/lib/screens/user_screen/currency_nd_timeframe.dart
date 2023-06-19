@@ -30,7 +30,6 @@ class CurrencyTimeFrame extends StatelessWidget {
                 ),
                 SizedBox(
                   width: 110,
-                  height: 35,
                   child: FutureBuilder<List<Map<String, dynamic>>>(
                       future: getSupportedAssets(),
                       builder: (context, data) {
@@ -87,7 +86,12 @@ class CurrencyTimeFrame extends StatelessWidget {
                               },
                               icon: const Icon(Icons.refresh));
                         } else {
-                          return const LinearProgressIndicator();
+                          return const SizedBox(
+                            width: 100,
+                            child: LinearProgressIndicator(
+                              minHeight: 3.0,
+                            ),
+                          );
                         }
                       }),
                 )

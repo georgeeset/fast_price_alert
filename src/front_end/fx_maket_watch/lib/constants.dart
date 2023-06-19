@@ -1,7 +1,8 @@
 // store most of the constant strings for the web app
 
-const String apiUrl = "http://192.168.4.168:6003";
-//"http://web-01.esetautomation.tech/fx-market-watch/";
+// const String apiUrl = "http://172.26.239.47:6003";
+
+const String apiUrl = "http://web-01.esetautomation.tech/fx-market-watch";
 
 const String firstName = 'first_name';
 const String lastName = 'last_name';

@@ -17,12 +17,12 @@ class EditAlertBloc extends Bloc<EditAlertEvent, EditAlertState> {
               setpoint: 0.0,
               timeFrame: '',
               alertMedium: '',
-              repeatSetpoint: 0,
+              repeatSetpoint: 1,
               note: '',
             ),
             alertMediumOk: false,
             timeframeOk: false,
-            repeatSetpointOk: false,
+            repeatSetpointOk: true,
             expirationOk: false,
             noteError: '',
             commodityOk: false,
@@ -102,6 +102,62 @@ class EditAlertBloc extends Bloc<EditAlertEvent, EditAlertState> {
             myAlert:
                 state.myAlert.updateAlert(expirationInDate: event.selectedDate),
             expirationOk: true,
+          ),
+        );
+      },
+    );
+
+    on<UpdateRepeatSetpoint>(
+      (event, emit) {
+        try {
+          var numba = int.parse(event.repeatSetpoint);
+          emit(
+            state.copyWith(
+                repeatSetpointOk: true,
+                myAlert: state.myAlert.updateAlert(repeatSetpoint: numba)),
+          );
+        } catch (e) {
+          emit(state.copyWith(repeatSetpointOk: false));
+        }
+      },
+    );
+
+    on<UpdateNote>(
+      (event, emit) {
+        if (event.note.length < 5) {
+          emit(state.copyWith(noteError: ('5 Characters is to short')));
+        } else {
+          emit(
+            state.copyWith(
+              noteError: '',
+              myAlert: state.myAlert.updateAlert(note: event.note),
+            ),
+          );
+        }
+      },
+    );
+
+    on<ClearForm>(
+      (event, emit) {
+        emit(
+          state.copyWith(
+            myAlert: const PriceAlert(
+              condition: '',
+              commodity: '',
+              setpoint: 0.0,
+              timeFrame: '',
+              alertMedium: '',
+              repeatSetpoint: 1,
+              note: '',
+            ),
+            alertMediumOk: false,
+            timeframeOk: false,
+            repeatSetpointOk: true,
+            expirationOk: false,
+            noteError: '',
+            commodityOk: false,
+            conditionOk: false,
+            setpointOk: false,
           ),
         );
       },

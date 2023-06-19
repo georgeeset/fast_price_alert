@@ -69,7 +69,7 @@ class UpdateAlertMedium extends EditAlertEvent {
 }
 
 class UpdateRepeatSetpoint extends EditAlertEvent {
-  final int repeatSetpoint;
+  final String repeatSetpoint;
 
   const UpdateRepeatSetpoint({required this.repeatSetpoint});
 
@@ -103,4 +103,9 @@ class UpdateExpiration extends EditAlertEvent {
 
   @override
   String toString() => 'UpdateExpirationState';
+}
+
+class ClearForm extends EditAlertEvent {
+  @override
+  String toString() => 'ClearFormEvent';
 }

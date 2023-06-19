@@ -8,7 +8,8 @@ String valueFromStrMap(String raw) {
   var specimen = raw;
   specimen = specimen.replaceAll('{', '').replaceAll('}', '');
   var broken = specimen.split(':');
-  // return {broken[0]: broken[1]};
+  //return {broken[0]: broken[1]};
+  print(broken[1]);
   return broken[1];
 }
 

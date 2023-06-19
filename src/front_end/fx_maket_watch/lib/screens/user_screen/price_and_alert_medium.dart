@@ -16,6 +16,7 @@ class PriceAndMedium extends StatelessWidget {
     var authState = context.read<AuthenticationBloc>().state;
     String token = '';
     if (authState is AuthenticatedState) token = authState.apiKey;
+    // print(token);
 
     return Card(
       child: Container(
@@ -51,7 +52,7 @@ class PriceAndMedium extends StatelessWidget {
                           isDense: true,
                           // isCollapsed: true,
                           prefixIcon: const Icon(
-                            Icons.price_change,
+                            Icons.price_check_sharp,
                           ),
                           border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(

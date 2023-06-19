@@ -22,10 +22,15 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'FX Market Watch',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 79, 75, 191)),
-          useMaterial3: true,
-        ),
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color.fromARGB(255, 79, 75, 191)),
+            useMaterial3: true,
+            cardTheme: CardTheme(
+              shape: BeveledRectangleBorder(
+                borderRadius: BorderRadius.circular(2.0),
+              ),
+              elevation: 2,
+            )),
         debugShowCheckedModeBanner: false,
 
         //TODO check api if user session is stil open before loaing home or login

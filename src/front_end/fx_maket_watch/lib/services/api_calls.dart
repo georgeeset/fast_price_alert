@@ -130,6 +130,9 @@ Future<List<Map<String, dynamic>>> getUserAlerMedium(
   }).onError((error, stackTrace) => throw (error.toString()));
 }
 
+/// Add new  or update alert if already exist.
+/// update is detectedif the alert already have alert_id.
+/// this will automatically call the update route of the API
 Future<Map<String, dynamic>> addAlert(
     {required PriceAlert newAlert, required String token}) async {
   var address = '${constants.apiUrl}/user/create-alert';
@@ -139,19 +142,39 @@ Future<Map<String, dynamic>> addAlert(
   updatedHead.addAll(
       {'accept': ' application/json', 'Authorization': 'Bearer $token'});
 
-  try {
-    var response =
-        await post(link, body: jsonEncode(myBody), headers: updatedHead);
-    if (response.statusCode == 201) {
-      // print(response.body);
-      return json.decode(response.body);
-    } else {
-      // print(response.statusCode);
+  if (newAlert.alertId != null) {
+    //Edit Existing alert
+    var editAddress = '${constants.apiUrl}/user/edit-alert';
+    var editLink = Uri.parse(editAddress);
 
-      throw (response.body.toString());
+    try {
+      var response =
+          await post(editLink, body: jsonEncode(myBody), headers: updatedHead);
+      if (response.statusCode == 201) {
+        // print(response.body);
+        return json.decode(response.body);
+      } else {
+        throw (response.body.toString());
+      }
+    } catch (e) {
+      throw (e.toString());
     }
-  } catch (e) {
-    throw (e.toString());
+  } else {
+    //Create new Alert
+    try {
+      var response =
+          await post(link, body: jsonEncode(myBody), headers: updatedHead);
+      if (response.statusCode == 201) {
+        // print(response.body);
+        return json.decode(response.body);
+      } else {
+        // print(response.statusCode);
+
+        throw (response.body.toString());
+      }
+    } catch (e) {
+      throw (e.toString());
+    }
   }
 }
 

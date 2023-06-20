@@ -19,7 +19,9 @@ class Login extends StatelessWidget {
       children: [
         const UserNameInput(),
         const SizedBox(height: 10),
-        const PasswordInputField(),
+        const PasswordInputField(
+          showWarning: false,
+        ),
         const SizedBox(height: 30),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

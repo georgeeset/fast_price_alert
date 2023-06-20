@@ -65,7 +65,7 @@ class RepeatSetpointAndNote extends StatelessWidget {
                 child: TextField(
                   keyboardType: TextInputType.text,
                   controller: noteController,
-                  maxLines: 6,
+                  maxLines: 4,
                   maxLength: 200,
                   onChanged: (val) {
                     context.read<EditAlertBloc>().add(UpdateNote(note: val));
@@ -76,7 +76,7 @@ class RepeatSetpointAndNote extends StatelessWidget {
                       errorText: state.noteError != '' ? state.noteError : null,
                       hintText:
                           'A short note to help remind you what your plan is',
-                      labelText: 'NOTE',
+                      // labelText: 'NOTE',
                       isDense: true,
                       border: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(

@@ -95,7 +95,7 @@ class ExpirationSelector extends StatelessWidget {
                       child: Text(
                         state.myAlert.expirationInDate != null
                             ? "${state.myAlert.expirationInDate!.hour.toString()}:${state.myAlert.expirationInDate!.minute.toString()}"
-                            : '00:00',
+                            : '${TimeOfDay.now().hour} : ${TimeOfDay.now().minute}',
                       ),
                     );
                   },

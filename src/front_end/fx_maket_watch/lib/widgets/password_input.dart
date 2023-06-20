@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubits/password_textfield_cubit/password_textfield_cubit.dart';
 
 class PasswordInputField extends StatelessWidget {
-  const PasswordInputField({Key? key, this.labelText = 'Password'})
+  const PasswordInputField(
+      {Key? key, this.labelText = 'Password', this.showWarning = true})
       : super(key: key);
   final String labelText;
+  final bool showWarning;
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +35,12 @@ class PasswordInputField extends StatelessWidget {
             filled: true,
             fillColor: Colors.white,
             //enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.zero),
-            errorText: state is PasswordTextfieldError ? state.message : null,
-            hintText: '*******',
+            errorText: !showWarning
+                ? null
+                : state is PasswordTextfieldError
+                    ? state.message
+                    : null,
+            hintText: '***',
             labelText: labelText,
             isDense: true,
             prefixIcon: const Icon(

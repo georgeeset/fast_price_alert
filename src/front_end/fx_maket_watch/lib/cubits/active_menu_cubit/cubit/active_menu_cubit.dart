@@ -4,7 +4,7 @@ class ActiveMenuCubit extends Cubit<int> {
   ActiveMenuCubit() : super(0);
 
   setActiveMenu(int number) {
-    print(number);
+    // print(number);
     int newActive = number;
     emit(newActive);
   }

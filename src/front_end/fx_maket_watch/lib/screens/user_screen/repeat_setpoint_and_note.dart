@@ -20,7 +20,18 @@ class RepeatSetpointAndNote extends StatelessWidget {
     return Container(
       width: 600,
       child: BlocBuilder<EditAlertBloc, EditAlertState>(
+        ///only relod if a major update is made
+        buildWhen: (context, state) {
+          if (state.updateModeOn) {
+            return true;
+          } else {
+            return false;
+          }
+        },
         builder: (context, state) {
+          // context
+          //     .read<EditAlertBloc>()
+          //     .add(OffUpdate()); // stop auto update of textfield
           return Column(children: [
             const Text("Repeat Alert"),
             Card(
@@ -31,7 +42,10 @@ class RepeatSetpointAndNote extends StatelessWidget {
                   child: TextField(
                     keyboardType: TextInputType.number,
                     enabled: true,
-                    controller: controller,
+                    controller: state.updateModeOn
+                        ? TextEditingController(
+                            text: state.myAlert.repeatSetpoint.toString())
+                        : controller,
                     maxLength: 1,
                     onChanged: (val) {
                       context
@@ -64,7 +78,9 @@ class RepeatSetpointAndNote extends StatelessWidget {
                     const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
                 child: TextField(
                   keyboardType: TextInputType.text,
-                  controller: noteController,
+                  controller: state.updateModeOn
+                      ? TextEditingController(text: state.myAlert.note)
+                      : noteController,
                   maxLines: 4,
                   maxLength: 200,
                   onChanged: (val) {

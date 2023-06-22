@@ -11,7 +11,7 @@ class PriceAndMedium extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController(
+    final TextEditingController controller = TextEditingController(
         text: context.read<EditAlertBloc>().state.myAlert.setpoint.toString());
     var authState = context.read<AuthenticationBloc>().state;
     String token = '';
@@ -34,11 +34,26 @@ class PriceAndMedium extends StatelessWidget {
                 SizedBox(
                   width: 120,
                   child: BlocBuilder<EditAlertBloc, EditAlertState>(
+                    ///only relod if a major update is made
+                    buildWhen: (context, state) {
+                      if (state.updateModeOn) {
+                        return true;
+                      } else {
+                        return false;
+                      }
+                    },
                     builder: (context, state) {
+                      context
+                          .read<EditAlertBloc>()
+                          .add(OffUpdate()); // stop auto update of textfield
                       return TextField(
                         keyboardType: TextInputType.number,
                         enabled: true,
-                        controller: controller,
+                        // textDirection: TextDirection.rtl,
+                        controller: state.updateModeOn
+                            ? TextEditingController(
+                                text: state.myAlert.setpoint.toString())
+                            : controller,
                         onChanged: (val) {
                           context
                               .read<EditAlertBloc>()
@@ -48,7 +63,7 @@ class PriceAndMedium extends StatelessWidget {
                           filled: true,
                           fillColor: Colors.white,
                           errorText: state.setpointOk ? null : 'Number',
-                          labelText: '0.2334',
+                          labelText: '#\$',
                           isDense: true,
                           // isCollapsed: true,
                           prefixIcon: const Icon(

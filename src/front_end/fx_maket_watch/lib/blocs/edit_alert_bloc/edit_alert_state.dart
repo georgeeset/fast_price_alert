@@ -11,6 +11,7 @@ class EditAlertState extends Equatable {
     required this.commodityOk,
     required this.setpointOk,
     required this.conditionOk,
+    required this.updateModeOn,
   });
 
   final PriceAlert myAlert;
@@ -22,6 +23,7 @@ class EditAlertState extends Equatable {
   final bool setpointOk;
   final String noteError;
   final bool conditionOk;
+  final bool updateModeOn;
 
   EditAlertState copyWith({
     PriceAlert? myAlert,
@@ -33,6 +35,8 @@ class EditAlertState extends Equatable {
     String? noteError,
     bool? setpointOk,
     bool? conditionOk,
+    bool? commentOk,
+    bool? updateModeOn,
   }) {
     return EditAlertState(
       myAlert: myAlert ?? this.myAlert,
@@ -44,6 +48,7 @@ class EditAlertState extends Equatable {
       noteError: noteError ?? this.noteError,
       setpointOk: setpointOk ?? this.setpointOk,
       conditionOk: conditionOk ?? this.conditionOk,
+      updateModeOn: updateModeOn ?? this.updateModeOn,
     );
   }
 
@@ -57,6 +62,7 @@ class EditAlertState extends Equatable {
         expirationOk,
         noteError,
         setpointOk,
-        conditionOk
+        conditionOk,
+        updateModeOn,
       ];
 }

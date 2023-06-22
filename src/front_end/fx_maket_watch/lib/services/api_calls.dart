@@ -148,15 +148,18 @@ Future<Map<String, dynamic>> addAlert(
     var editLink = Uri.parse(editAddress);
 
     try {
-      var response =
-          await post(editLink, body: jsonEncode(myBody), headers: updatedHead);
-      if (response.statusCode == 201) {
+      var response = await put(editLink,
+          body: jsonEncode(newAlert.toJson(forUpdate: true)),
+          headers: updatedHead);
+      if (response.statusCode == 202) {
         // print(response.body);
-        return json.decode(response.body);
+        return jsonDecode(response.body);
       } else {
-        throw (response.body.toString());
+        print(response.body);
+        throw (response.body);
       }
     } catch (e) {
+      print(e.toString());
       throw (e.toString());
     }
   } else {
@@ -190,6 +193,31 @@ Future<String> getAllAlerts({required String token}) async {
     if (response.statusCode == 200) {
       // print(response.body);
       return response.body;
+    } else {
+      throw (response.body);
+    }
+  } catch (e) {
+    throw (e.toString());
+  }
+}
+
+Future<Map<String, dynamic>> deleteAlert(
+    {required int alertId, required String token}) async {
+  var address = '${constants.apiUrl}/user/delete-alert';
+  var link = Uri.parse(address);
+  var updatedHead = constants.getReqHead; //constants.loginHead;
+  updatedHead.addAll(
+      {'accept': ' application/json', 'Authorization': 'Bearer $token'});
+  Map<String, dynamic> deleteBody = {'alert_id': alertId};
+
+  try {
+    var response = await delete(
+      link,
+      headers: updatedHead,
+      body: jsonEncode(deleteBody),
+    );
+    if (response.statusCode == 202) {
+      return jsonDecode(response.body);
     } else {
       throw (response.body);
     }

@@ -14,11 +14,12 @@ class SaveAlertCubit extends Cubit<SaveAlertState> {
 
     var alertDressup = newAlert;
     var nowTime = DateTime.now();
-    var inHours = alertDressup.expirationInDate!.difference(nowTime).inHours;
-    if (inHours < 1) {
-      inHours = 1;
+    if (alertDressup.expirationInDate != null) {
+      var inHours = alertDressup.expirationInDate!.difference(nowTime).inHours;
+      if (inHours < 0) inHours = 1;
+      alertDressup = alertDressup.updateAlert(expirationInHrs: inHours);
     }
-    alertDressup = alertDressup.updateAlert(expirationInHrs: inHours);
+
     // print(alertDressup.expirationInHrs);
 
     await addAlert(newAlert: alertDressup, token: token).then((value) {

@@ -94,6 +94,16 @@ class UpdateNote extends EditAlertEvent {
   String toString() => 'UpdateNoteEvent';
 }
 
+class LoadNewAlert extends EditAlertEvent {
+  final PriceAlert alert;
+  const LoadNewAlert({required this.alert});
+
+  @override
+  List<Object> get props => [alert];
+  @override
+  String toString() => "LoadNewAlertEvent";
+}
+
 class UpdateExpiration extends EditAlertEvent {
   final DateTime selectedDate;
   const UpdateExpiration({required this.selectedDate});
@@ -103,6 +113,20 @@ class UpdateExpiration extends EditAlertEvent {
 
   @override
   String toString() => 'UpdateExpirationState';
+}
+
+///To help trigger updatemode so that all fields
+///will be updated with nre data
+class UpdateMode extends EditAlertEvent {
+  @override
+  String toString() => 'UpdateEvent';
+}
+
+///allow widgets like textinputs to stop listening to what
+///they write thereby causing intference
+class OffUpdate extends EditAlertEvent {
+  @override
+  String toString() => 'OffUpdateEvent';
 }
 
 class ClearForm extends EditAlertEvent {

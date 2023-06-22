@@ -20,6 +20,10 @@ class AuthenticatedState extends AuthenticationState {
 
   @override
   List<Object> get props => [apiKey];
+
+  Map<String, dynamic> toMap() {
+    return {'apiKey': apiKey};
+  }
 }
 
 class RegisteredState extends AuthenticationState {

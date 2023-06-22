@@ -4,12 +4,13 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fx_maket_watch/repository/util_functions.dart';
 import 'package:fx_maket_watch/services/api_calls.dart' as service;
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState>
+    with HydratedMixin {
   AuthenticationBloc()
       : super(AuthenticationInitial()
             // const AuthenticatedState(
@@ -72,6 +73,27 @@ class AuthenticationBloc
         emit(AuthenticationError(message: e.toString()));
       }
     });
+  }
+
+  @override
+  AuthenticationState? fromJson(Map<String, dynamic> json) {
+    var data = json['apiKey'].toString();
+    if (data != 'null') {
+      return AuthenticatedState(apiKey: data);
+    } else {
+      return AuthenticationInitial();
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(AuthenticationState state) {
+    if (state is AuthenticatedState) {
+      return state.toMap();
+    } else {
+      return {'apiKey': 'null'};
+    }
+
+    // return state.toMap();
   }
 
   @override

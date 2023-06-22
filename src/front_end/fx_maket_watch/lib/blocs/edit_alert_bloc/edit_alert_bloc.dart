@@ -28,6 +28,7 @@ class EditAlertBloc extends Bloc<EditAlertEvent, EditAlertState> {
             commodityOk: false,
             conditionOk: false,
             setpointOk: false,
+            updateModeOn: false,
           ),
         ) {
     // on<EditAlertEvent>((event, emit) {});
@@ -139,28 +140,62 @@ class EditAlertBloc extends Bloc<EditAlertEvent, EditAlertState> {
 
     on<ClearForm>(
       (event, emit) {
-        emit(
-          state.copyWith(
-            myAlert: const PriceAlert(
-              condition: '',
-              commodity: '',
-              setpoint: 0.0,
-              timeFrame: '',
-              alertMedium: '',
-              repeatSetpoint: 1,
-              note: '',
-            ),
-            alertMediumOk: false,
-            timeframeOk: false,
-            repeatSetpointOk: true,
-            expirationOk: false,
-            noteError: '',
-            commodityOk: false,
-            conditionOk: false,
-            setpointOk: false,
+        emit(state.copyWith(
+          myAlert: const PriceAlert(
+            condition: '',
+            commodity: '',
+            setpoint: 0.0,
+            timeFrame: '',
+            alertMedium: '',
+            repeatSetpoint: 1,
+            note: '',
           ),
-        );
+          alertMediumOk: false,
+          timeframeOk: false,
+          repeatSetpointOk: true,
+          expirationOk: false,
+          noteError: '',
+          commodityOk: false,
+          conditionOk: false,
+          setpointOk: false,
+          updateModeOn: true,
+        ));
       },
+    );
+
+    on<LoadNewAlert>(
+      (event, emit) {
+        PriceAlert newAlert = event.alert;
+        emit(state.copyWith(
+          myAlert: newAlert,
+          commentOk: true,
+          alertMediumOk: true,
+          timeframeOk: true,
+          expirationOk: true,
+          noteError: '',
+          commodityOk: true,
+          setpointOk: true,
+          repeatSetpointOk: true,
+          conditionOk: true,
+          updateModeOn: true,
+        ));
+      },
+    );
+
+    on<UpdateMode>((event, emit) {
+      emit(
+        state.copyWith(
+          updateModeOn: true,
+        ),
+      );
+    });
+
+    on<OffUpdate>(
+      (event, emit) => emit(
+        state.copyWith(
+          updateModeOn: false,
+        ),
+      ),
     );
   }
 

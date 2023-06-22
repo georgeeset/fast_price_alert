@@ -27,6 +27,13 @@ class Signup extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const Text(
+            'Register',
+            style: TextStyle(fontSize: 20.0, color: Colors.black87),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
           const UserNameInput(),
           const SizedBox(height: 10),
           const PasswordInputField(),

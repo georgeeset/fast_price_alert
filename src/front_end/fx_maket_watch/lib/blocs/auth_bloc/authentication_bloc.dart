@@ -96,12 +96,12 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState>
     // return state.toMap();
   }
 
-  @override
-  void onChange(Change<AuthenticationState> change) {
-    print('state changed');
-    print(change.currentState.toString());
-    print('New State');
-    print(change.nextState.toString());
-    super.onChange(change);
-  }
+  // @override
+  // void onChange(Change<AuthenticationState> change) {
+  //   print('state changed');
+  //   print(change.currentState.toString());
+  //   print('New State');
+  //   print(change.nextState.toString());
+  //   super.onChange(change);
+  // }
 }
